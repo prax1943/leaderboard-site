@@ -464,6 +464,10 @@
       background: #ff9999;
       color: #111;
     }
+    .copyable-name {
+      cursor: pointer;
+      transition: background 0.2s;
+    }
     @keyframes fadeIn {
       from { opacity: 0; transform: scale(.98);}
       to   { opacity: 1; transform: scale(1);}
@@ -709,7 +713,31 @@
       return;
     }
     queueArr.forEach((item, idx) => {
-      queueListItems.innerHTML += `<li><strong>${item.name}</strong>${item.note ? ` <span style="color:#d1a3a3;">(${item.note})</span>` : ""}</li>`;
+      queueListItems.innerHTML += `<li>
+        <strong class="copyable-name" data-name="${item.name}" style="cursor:pointer;">${item.name}</strong>
+        ${item.note ? ` <span style="color:#d1a3a3;">(${item.note})</span>` : ""}
+      </li>`;
+    });
+    // เพิ่ม event สำหรับคัดลอกชื่อ
+    queueListItems.querySelectorAll('.copyable-name').forEach(el => {
+      el.onclick = function() {
+        const name = el.getAttribute('data-name');
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(name);
+        } else {
+          // fallback
+          const temp = document.createElement('input');
+          document.body.appendChild(temp);
+          temp.value = name;
+          temp.select();
+          document.execCommand('copy');
+          document.body.removeChild(temp);
+        }
+        // แจ้งเตือนแบบเล็กๆ
+        el.style.background = "#ffb3b366";
+        setTimeout(()=>{el.style.background="";},400);
+      };
+      el.title = "คลิ๊กเพื่อคัดลอกชื่อ";
     });
   }
 
