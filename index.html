@@ -29,6 +29,16 @@
       overflow: hidden;
       background: radial-gradient(ellipse at center, #330000 0%, #110000 70%);
     }
+    .snail-drop-container {
+      pointer-events: none;
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 1000;
+      overflow: hidden;
+    }
     .wrapper {
       max-width: 720px;
       width: 90vw;
@@ -494,6 +504,7 @@
 </head>
 <body>
   <div class="background-effect" id="backgroundEffect"></div>
+  <div class="snail-drop-container" id="snailDropContainer"></div>
   <div class="wrapper">
     <nav class="menu">
       <div class="tab active" data-tab="leaderboard">Leaderboard</div>
@@ -599,6 +610,68 @@
   };
   firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
+
+  // Snail Drop Effect
+  function dropSnails(durationMs = 3000, interval = 180) {
+    const emoji = "🐌";
+    const container = document.getElementById("snailDropContainer");
+    container.style.pointerEvents = "none";
+    container.style.position = "fixed";
+    container.style.left = "0";
+    container.style.top = "0";
+    container.style.width = "100vw";
+    container.style.height = "100vh";
+    container.style.zIndex = "1000";
+    container.style.overflow = "hidden";
+
+    let running = true;
+    function randomLeft() {
+      return Math.random() * 90 + 2; // % left (2-92%)
+    }
+    function randomSize() {
+      return Math.random() * 32 + 28; // px 28-60px
+    }
+    function randomDuration() {
+      return Math.random() * 1.4 + 1.6; // 1.6-3s
+    }
+    function createSnail() {
+      if (!running) return;
+      const snail = document.createElement("div");
+      snail.textContent = emoji;
+      const left = randomLeft();
+      const size = randomSize();
+      const fallDur = randomDuration();
+      snail.style.position = "fixed";
+      snail.style.left = left + "vw";
+      snail.style.top = "-60px";
+      snail.style.fontSize = size + "px";
+      snail.style.userSelect = "none";
+      snail.style.pointerEvents = "none";
+      snail.style.opacity = "0.93";
+      snail.style.transition = `transform ${fallDur}s linear, opacity 0.3s`;
+      snail.style.transform = `translateY(0) rotate(${Math.random()*40-20}deg)`;
+      container.appendChild(snail);
+
+      setTimeout(() => {
+        snail.style.transform = `translateY(${window.innerHeight + 80}px) rotate(${Math.random()*40-20}deg)`;
+        snail.style.opacity = "0.75";
+      }, 30);
+
+      setTimeout(() => {
+        snail.remove();
+      }, fallDur * 1000 + 1000);
+    }
+
+    const intervalId = setInterval(createSnail, interval);
+    setTimeout(() => {
+      running = false;
+      clearInterval(intervalId);
+      setTimeout(() => { container.innerHTML = ""; }, 2000);
+    }, durationMs);
+  }
+  window.addEventListener("DOMContentLoaded", function(){
+    dropSnails(3000, 150);
+  });
 
   function makeCopyableNames(container) {
     container = container || document;
