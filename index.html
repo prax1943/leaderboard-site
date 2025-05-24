@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Leaderboard with Contact Menu & Sound + Animated BG</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+
+    body {
+      margin: 0;
+      padding: 3rem;
+      font-family: 'Montserrat', sans-serif;
+      background-color: #111;
+      color: #eee;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      user-select: none;
+      perspective: 1000px;
+      overflow-x: hidden;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* เอฟเฟกต์พื้นหลังอนุภาค */
+    .background-effect {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+      background: radial-gradient(ellipse at center, #330000 0%, #110000 70%);
+    }
+
+    .particle {
+      position: absolute;
+      background: radial-gradient(circle, rgba(255,75,75,0.9) 0%, transparent 70%);
+      border-radius: 50%;
+      opacity: 0.2;
+      animation-timing-function: linear;
+      animation-iteration-count: infinite;
+    }
+
+    /* สร้างหลายขนาด particle */
+    .particle.small {
+      width: 6px;
+      height: 6px;
+      animation-name: driftSmall;
+      animation-duration: 12s;
+    }
+
+    .particle.medium {
+      width: 10px;
+      height: 10px;
+      animation-name: driftMedium;
+      animation-duration: 18s;
+    }
+
+    .particle.large {
+      width: 14px;
+      height: 14px;
+      animation-name: driftLarge;
+      animation-duration: 25s;
+    }
+
+    @keyframes driftSmall {
+      0% { transform: translate(0, 0); opacity: 0.2;}
+      50% { transform: translate(10px, 10px); opacity: 0.4;}
+      100% { transform: translate(0, 0); opacity: 0.2;}
+    }
+    @keyframes driftMedium {
+      0% { transform: translate(0, 0); opacity: 0.15;}
+      50% { transform: translate(-15px, 15px); opacity: 0.3;}
+      100% { transform: translate(0, 0); opacity: 0.15;}
+    }
+    @keyframes driftLarge {
+      0% { transform: translate(0, 0); opacity: 0.1;}
+      50% { transform: translate(20px, -10px); opacity: 0.25;}
+      100% { transform: translate(0, 0); opacity: 0.1;}
+    }
+
+    .wrapper {
+      max-width: 720px;
+      width: 90vw;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* เมนูแท็บด้านบน */
+    .menu {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 2rem;
+      gap: 2rem;
+      user-select: none;
+    }
+
+    .tab {
+      padding: 12px 30px;
+      border-radius: 30px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: #ff4b4b;
+      background: #220000;
+      box-shadow:
+        0 0 8px #ff4b4b88;
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+      user-select: none;
+      user-drag: none;
+    }
+
+    .tab:hover {
+      background: #ff4b4b;
+      color: #111;
+      box-shadow: 0 0 20px #ff4b4bcc;
+      border-color: #ff4b4b;
+    }
+
+    .tab.active {
+      background: #ff4b4b;
+      color: #111;
+      box-shadow: 0 0 20px #ff4b4bcc;
+      border-color: #ff4b4b;
+    }
+
+    /* container ใช้สำหรับ content ทั้งสองแท็บ */
+    .container {
+      background: linear-gradient(145deg, #2b0000, #480000);
+      padding: 2rem 3rem;
+      border-radius: 20px;
+      box-shadow:
+        0 0 20px #ff1e1e88,
+        inset 0 0 40px #ff4b4baa;
+      transform-style: preserve-3d;
+      transition: box-shadow 0.3s ease;
+      user-select: none;
+      transform: rotateX(0deg) rotateY(0deg);
+    }
+
+    /* ซ่อนเนื้อหาที่ไม่ได้เลือก */
+    .content {
+      display: none;
+      color: #ffc9c9;
+    }
+
+    .content.active {
+      display: block;
+    }
+
+    /* --- ส่วน Leaderboard (เหมือนเดิม) --- */
+    h1 {
+      font-weight: 700;
+      font-size: 3rem;
+      letter-spacing: 3px;
+      color: #ff4b4b;
+      margin-bottom: 2rem;
+      text-shadow: 0 0 12px #ff4b4bcc;
+      user-select: none;
+      text-align: center;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 14px 20px;
+      font-size: 1.2rem;
+      border: 2px solid #ff4b4b;
+      border-radius: 30px;
+      background: transparent;
+      color: #eee;
+      outline: none;
+      transition: all 0.3s ease;
+      margin-bottom: 2rem;
+      text-align: center;
+      user-select: text;
+    }
+
+    input[type="text"]::placeholder {
+      color: #d1a3a3;
+    }
+
+    input[type="text"]:focus {
+      background-color: #ff4b4b;
+      color: #111;
+      box-shadow: 0 0 20px #ff4b4bcc;
+      border-color: #ff4b4b;
+    }
+
+    .rank-info {
+      font-size: 1.3rem;
+      margin-bottom: 3rem;
+      font-weight: 600;
+      text-align: center;
+      min-height: 2.4rem;
+      color: #ffc9c9;
+      letter-spacing: 0.1em;
+      user-select: none;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow:
+        0 8px 20px rgba(255, 75, 75, 0.7);
+      background: #3c0000;
+    }
+
+    th, td {
+      padding: 18px 24px;
+      text-align: left;
+      border-bottom: 1px solid #772222;
+      font-weight: 500;
+      font-size: 1.1rem;
+      color: #ffc9c9;
+    }
+
+    th {
+      background-color: #550000;
+      color: #ffb3b3;
+      letter-spacing: 0.15em;
+      font-weight: 700;
+    }
+
+    tbody tr:hover {
+      background-color: #ff4b4bcc;
+      color: #111;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .rank-tier {
+      display: inline-block;
+      padding: 6px 18px;
+      border-radius: 40px;
+      font-weight: 700;
+      font-size: 1rem;
+      background-color: #ff4b4b;
+      color: #fff;
+      letter-spacing: 0.15em;
+      box-shadow: 0 0 10px #ff4b4bcc;
+      user-select: none;
+    }
+
+    /* Rank tiers with subtle variations */
+    .S { background-color: #ff6666; box-shadow: 0 0 15px #ff6666cc; }
+    .A { background-color: #ff4b4b; }
+    .B { background-color: #cc3a3a; }
+    .C { background-color: #992828; }
+    .D { background-color: #661818; }
+
+    /* --- Contact tab styling --- */
+    .contact-list {
+      font-size: 1.2rem;
+      line-height: 2;
+      max-width: 480px;
+      margin: 0 auto;
+      text-align: center;
+      color: #ffc9c9;
+    }
+
+    .contact-list a {
+      color: #ff4b4b;
+      text-decoration: none;
+      font-weight: 700;
+      transition: color 0.3s ease;
+    }
+
+    .contact-list a:hover {
+      color: #ff9999;
+      text-decoration: underline;
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 2.2rem;
+      }
+      th, td {
+        font-size: 0.9rem;
+        padding: 14px 16px;
+      }
+      input[type="text"] {
+        font-size: 1rem;
+        padding: 12px 16px;
+      }
+      .tab {
+        padding: 10px 20px;
+        font-size: 1rem;
+      }
+      .contact-list {
+        font-size: 1rem;
+        line-height: 1.6;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="background-effect" id="backgroundEffect"></div>
+
+  <div class="wrapper">
+    <nav class="menu">
+      <div class="tab active" data-tab="leaderboard">Leaderboard</div>
+      <div class="tab" data-tab="contact">Contact</div>
+    </nav>
+
+    <div class="container" id="tiltContainer">
+      <!-- Leaderboard content -->
+      <div id="leaderboard" class="content active">
+        <h1>Lingkinpug Leaderboard</h1>
+
+        <input type="text" id="searchInput" placeholder="พิมพ์ชื่อของคุณ เช่น Ling" autocomplete="off" />
+        <div class="rank-info" id="rankInfo">กรอกชื่อด้านบนเพื่อดูอันดับของคุณ</div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>no</th>
+              <th>name</th>
+              <th>score</th>
+              <th>rank</th>
+            </tr>
+          </thead>
+          <tbody id="leaderboardBody"></tbody>
+        </table>
+      </div>
+
+      <!-- Contact content -->
+      <div id="contact" class="content">
+        <h1>PK4</h1>
+        <div class="contact-list">
+          <p>📧 Roblox: <a href="https://www.roblox.com/users/849036274/profile">LingkinPug</a></p>
+          <p>💬 Discord: <a href="https://discord.gg/RyVVMRs9rN" target="_blank" rel="noopener noreferrer">Lingkinpug community</a></p>
+          <p>🌐 Tiktok: <a href="https://www.tiktok.com/@lingkinpug8" target="_blank" rel="noopener noreferrer">@lingkinpug8</a></p>
+          <p>📱 Facebook: <a href="https://web.facebook.com/110rr?locale=th_TH" target="_blank" rel="noopener noreferrer">Lingkinpug</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  // Player data
+  const players = [
+    { name: "TAM", score: 1800 },
+    { name: "Ling", score: 1200 },
+    { name: "Leon", score: 1200 },
+    { name: "kuy", score: 350 },
+    { name: "hee", score: 350 },
+    { name: "Guy", score: 1 }
+  ];
+
+  function getRank(score) {
+    if (score >= 1500) return "S";
+    if (score >= 1200) return "A";
+    if (score >= 800) return "B";
+    if (score >= 400) return "C";
+    return "D";
+  }
+
+  // Sort players by score descending
+  const sorted = players.slice().sort((a, b) => b.score - a.score);
+
+  // Render leaderboard table
+  const tbody = document.getElementById("leaderboardBody");
+  sorted.forEach((player, index) => {
+    const rank = getRank(player.score);
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>#${index + 1}</td>
+      <td>${player.name}</td>
+      <td>${player.score}</td>
+      <td><span class="rank-tier ${rank}">${rank}</span></td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  // Search input event
+  const input = document.getElementById("searchInput");
+  const info = document.getElementById("rankInfo");
+
+  input.addEventListener("input", () => {
+    const query = input.value.trim().toLowerCase();
+    const foundIndex = sorted.findIndex(p => p.name.toLowerCase() === query);
+    if (foundIndex !== -1) {
+      const player = sorted[foundIndex];
+      info.innerHTML = `<strong>${player.name}</strong> อยู่อันดับ <strong>#${foundIndex + 1}</strong> แรงค์: <span class="rank-tier ${getRank(player.score)}">${getRank(player.score)}</span> (${player.score} คะแนน)`;
+    } else {
+      info.textContent = "ไม่พบชื่อนี้ในตาราง";
+    }
+  });
+
+  // Tab switching with click sound
+  const tabs = document.querySelectorAll(".tab");
+  const contents = document.querySelectorAll(".content");
+
+  // Load click sound
+  const clickSound = new Audio("https://freesound.org/data/previews/256/256113_3263906-lq.mp3");
+  clickSound.volume = 0.15;
+
+  // Typing sound
+  const typingSound = new Audio("https://freesound.org/data/previews/221/221663_4019027-lq.mp3");
+  typingSound.volume = 0.07;
+
+  tabs.forEach(tab => {
+    tab.addEventListener("click", () => {
+      clickSound.currentTime = 0;
+      clickSound.play();
+
+      // Remove active class from all tabs & contents
+      tabs.forEach(t => t.classList.remove("active"));
+      contents.forEach(c => c.classList.remove("active"));
+
+      // Add active to clicked tab & corresponding content
+      tab.classList.add("active");
+      const target = tab.dataset.tab;
+      document.getElementById(target).classList.add("active");
+    });
+  });
+
+  // Play typing sound when typing
+  input.addEventListener("keydown", () => {
+    // play sound only if not playing
+    if (typingSound.paused) {
+      typingSound.currentTime = 0;
+      typingSound.play();
+    }
+  });
+
+  // Tilt effect - smooth and subtle
+  const container = document.getElementById("tiltContainer");
+  let mouseX = 0;
+  let mouseY = 0;
+  let rotateX = 0;
+  let rotateY = 0;
+
+  window.addEventListener("mousemove", e => {
+    const rect = container.getBoundingClientRect();
+    mouseX = e.clientX - (rect.left + rect.width / 2);
+    mouseY = e.clientY - (rect.top + rect.height / 2);
+  });
+
+  function animate() {
+    rotateX += (mouseY / 25 - rotateX) * 0.1;
+    rotateY += (mouseX / 25 - rotateY) * 0.1;
+    container.style.transform = `rotateX(${-rotateX}deg) rotateY(${rotateY}deg)`;
+    requestAnimationFrame(animate);
+  }
+
+  animate();
+
+  // Generate background particles
+  const bg = document.getElementById("backgroundEffect");
+
+  function randomBetween(min, max) {
+    return Math.random() * (max - min) + min;
+  }
+
+  // Create 30 particles of different sizes and positions
+  for (let i = 0; i < 30; i++) {
+    const p = document.createElement("div");
+    p.classList.add("particle");
+    const sizeClass = i % 3 === 0 ? "small" : (i % 3 === 1 ? "medium" : "large");
+    p.classList.add(sizeClass);
+
+    p.style.top = `${randomBetween(0, 100)}%`;
+    p.style.left = `${randomBetween(0, 100)}%`;
+    p.style.animationDelay = `${randomBetween(0, 20)}s`;
+
+    bg.appendChild(p);
+  }
+</script>
+</body>
+</html>
