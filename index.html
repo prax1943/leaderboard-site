@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Lingkinpug Queue (Realtime Leaderboard)</title>
+  <title>Lingkinpug Queue (Firebase Version)</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
     body {
@@ -489,6 +489,7 @@
       .admin-panel .players-list { max-height: 160px; }
     }
   </style>
+  <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 </head>
@@ -497,7 +498,7 @@
   <div class="wrapper">
     <nav class="menu">
       <div class="tab active" data-tab="leaderboard">Leaderboard</div>
-      <div class="tab" data-tab="queue">queue</div>
+      <div class="tab" data-tab="queue">จองคิว</div>
       <div class="tab" data-tab="contact">Contact</div>
       <div class="tab" data-tab="admin">Admin</div>
     </nav>
@@ -600,6 +601,7 @@
   firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
 
+  // --- คัดลอกชื่อทุกหน้า ---
   function makeCopyableNames(container) {
     container = container || document;
     container.querySelectorAll('.copyable-name').forEach(el => {
@@ -620,18 +622,30 @@
     });
   }
 
-  // Leaderboard Realtime
-  let players = [];
-  db.ref('leaderboard').on('value', snapshot => {
-    const arr = [];
-    snapshot.forEach(child => {
-      arr.push({ key: child.key, ...child.val() });
-    });
-    arr.sort((a, b) => b.score - a.score);
-    players = arr;
-    renderLeaderboardTable();
-    renderAdminPlayersList();
-  });
+  // --- Leaderboard (local only) ---
+  const leaderboardKey = "lingkinpugLeaderboard";
+  let players = null;
+  function getPlayers() {
+    if (players) return players;
+    try {
+      let raw = localStorage.getItem(leaderboardKey);
+      if (!raw) return [
+        { name: "TAM", score: 1800 },
+        { name: "Ling", score: 1200 },
+        { name: "Leon", score: 1200 },
+        { name: "kuy", score: 350 },
+        { name: "hee", score: 350 },
+        { name: "Guy", score: 1 }
+      ];
+      return JSON.parse(raw);
+    } catch {
+      return [];
+    }
+  }
+  function setPlayers(pls) {
+    players = pls;
+    localStorage.setItem(leaderboardKey, JSON.stringify(pls));
+  }
   function getRank(score) {
     if (score >= 1500) return "S";
     if (score >= 1200) return "A";
@@ -640,9 +654,10 @@
     return "D";
   }
   function renderLeaderboardTable() {
+    const sorted = getPlayers().slice().sort((a, b) => b.score - a.score);
     const tbody = document.getElementById("leaderboardBody");
     tbody.innerHTML = "";
-    players.forEach((player, index) => {
+    sorted.forEach((player, index) => {
       const rank = getRank(player.score);
       const tr = document.createElement("tr");
       tr.innerHTML = `
@@ -656,11 +671,12 @@
     makeCopyableNames(tbody);
   }
 
-  // Queue Realtime
+  // --- Firebase Queue Logic ---
   let allQueue = [];
   let myName = localStorage.getItem("lingkinpugMyQueueName") || "";
   let myQueueKey = localStorage.getItem("lingkinpugMyQueueKey") || "";
 
+  // Listen to queue (real-time)
   db.ref('queue').on('value', snapshot => {
     const arr = [];
     snapshot.forEach(child => {
@@ -709,7 +725,7 @@
     }
   }
 
-  // Queue UI
+  // --- Queue UI ---
   const queueForm = document.getElementById("queueForm");
   const queueName = document.getElementById("queueName");
   const queueNote = document.getElementById("queueNote");
@@ -731,13 +747,14 @@
     });
     makeCopyableNames(queueListItems);
   }
+
   function showWaitingScreen(queueArr) {
     queueForm.style.display = "none";
     queueList.style.display = "none";
     queueWaiting.style.display = "block";
     const idx = queueArr.findIndex(q => q.name === myName);
     if (idx === -1) { showFormScreen(); return; }
-    queueWaiting.querySelector('.your-queue').innerHTML =
+    queueWaiting.querySelector('.your-queue').innerHTML = 
       `คุณอยู่ลำดับ <span style="color:#ff4b4b;font-size:1.2em;">#${idx+1}</span> ในคิว<br>
        <span class="copyable-name" data-copy="${queueArr[idx].name}">${queueArr[idx].name}</span>
        <span style="color:#d1a3a3;font-size:0.9em;">${queueArr[idx].note ? `(${queueArr[idx].note})` : ''}</span>`;
@@ -790,7 +807,7 @@
   });
   queueTab.addEventListener("click", updateQueueTabScreen);
 
-  // Admin
+  // --- Admin logic ---
   const ADMIN_PASSWORD = "pugking2024";
   const adminTab = document.querySelector('.tab[data-tab="admin"]');
   const adminLoginForm = document.getElementById("adminLoginForm");
@@ -808,51 +825,6 @@
     adminMsgDiv.textContent = msg;
     adminMsgDiv.style.color = type === "ok" ? "#ffb3b3" : "#ff4b4b";
     setTimeout(() => adminMsgDiv.textContent = "", 2000);
-  }
-  function addPlayer(name, score) {
-    db.ref('leaderboard').push({ name, score });
-  }
-  function updatePlayer(key, name, score) {
-    db.ref('leaderboard/' + key).update({ name, score });
-  }
-  function removePlayer(key) {
-    db.ref('leaderboard/' + key).remove();
-  }
-  function renderAdminPlayersList() {
-    const listDiv = document.getElementById("adminPlayersList");
-    let html = `<table><thead>
-      <tr><th>ลำดับ</th><th>ชื่อ</th><th>คะแนน</th><th>แก้ไข</th><th>ลบ</th></tr>
-      </thead><tbody>`;
-    players.forEach((player, index) => {
-      html += `<tr>
-        <td>#${index + 1}</td>
-        <td><input data-index="${index}" data-field="name" value="${player.name}" maxlength="24" style="width:85px;background:#550000;color:#ffc9c9;text-align:center;border-radius:12px;border:1px solid #772222;" /></td>
-        <td><input data-index="${index}" data-field="score" type="number" value="${player.score}" min="0" style="width:65px;background:#550000;color:#ffc9c9;text-align:center;border-radius:12px;border:1px solid #772222;" /></td>
-        <td><button data-index="${index}" class="admin-save-player">บันทึก</button></td>
-        <td><button data-index="${index}" class="admin-remove-player">ลบ</button></td>
-      </tr>`;
-    });
-    html += "</tbody></table>";
-    listDiv.innerHTML = html;
-    listDiv.querySelectorAll(".admin-save-player").forEach(btn => {
-      btn.onclick = function(){
-        const idx = parseInt(btn.getAttribute("data-index"));
-        const nameInput = listDiv.querySelector(`input[data-index="${idx}"][data-field="name"]`);
-        const scoreInput = listDiv.querySelector(`input[data-index="${idx}"][data-field="score"]`);
-        let player = players[idx];
-        updatePlayer(player.key, nameInput.value.trim().substring(0,24), parseInt(scoreInput.value)||0);
-        adminMsg("อัปเดตสำเร็จ!","ok");
-      };
-    });
-    listDiv.querySelectorAll(".admin-remove-player").forEach(btn => {
-      btn.onclick = function(){
-        if (!confirm("ลบรายการนี้ใช่หรือไม่?")) return;
-        const idx = parseInt(btn.getAttribute("data-index"));
-        let player = players[idx];
-        removePlayer(player.key);
-        adminMsg("ลบสำเร็จ!","ok");
-      };
-    });
   }
   function renderAdminQueueList(queueArr) {
     if (!queueArr) return;
@@ -875,6 +847,50 @@
         if (!confirm("ลบคิวนี้ใช่หรือไม่?")) return;
         const key = btn.getAttribute("data-key");
         removeFromQueueByKey(key);
+      };
+    });
+  }
+  function renderAdminPlayersList() {
+    const listDiv = document.getElementById("adminPlayersList");
+    const sorted = getPlayers().slice().sort((a, b) => b.score - a.score);
+    let html = `<table><thead>
+      <tr><th>ลำดับ</th><th>ชื่อ</th><th>คะแนน</th><th>แก้ไข</th><th>ลบ</th></tr>
+      </thead><tbody>`;
+    sorted.forEach((player, index) => {
+      html += `<tr>
+        <td>#${index + 1}</td>
+        <td><input data-index="${index}" data-field="name" value="${player.name}" maxlength="24" style="width:85px;background:#550000;color:#ffc9c9;text-align:center;border-radius:12px;border:1px solid #772222;" /></td>
+        <td><input data-index="${index}" data-field="score" type="number" value="${player.score}" min="0" style="width:65px;background:#550000;color:#ffc9c9;text-align:center;border-radius:12px;border:1px solid #772222;" /></td>
+        <td><button data-index="${index}" class="admin-save-player">บันทึก</button></td>
+        <td><button data-index="${index}" class="admin-remove-player">ลบ</button></td>
+      </tr>`;
+    });
+    html += "</tbody></table>";
+    listDiv.innerHTML = html;
+    listDiv.querySelectorAll(".admin-save-player").forEach(btn => {
+      btn.onclick = function(){
+        const idx = parseInt(btn.getAttribute("data-index"));
+        const nameInput = listDiv.querySelector(`input[data-index="${idx}"][data-field="name"]`);
+        const scoreInput = listDiv.querySelector(`input[data-index="${idx}"][data-field="score"]`);
+        let pls = getPlayers();
+        pls[idx].name = nameInput.value.trim().substring(0,24);
+        pls[idx].score = parseInt(scoreInput.value)||0;
+        setPlayers(pls);
+        renderLeaderboardTable();
+        renderAdminPlayersList();
+        adminMsg("อัปเดตสำเร็จ!","ok");
+      };
+    });
+    listDiv.querySelectorAll(".admin-remove-player").forEach(btn => {
+      btn.onclick = function(){
+        if (!confirm("ลบรายการนี้ใช่หรือไม่?")) return;
+        const idx = parseInt(btn.getAttribute("data-index"));
+        let pls = getPlayers();
+        pls.splice(idx,1);
+        setPlayers(pls);
+        renderLeaderboardTable();
+        renderAdminPlayersList();
+        adminMsg("ลบสำเร็จ!","ok");
       };
     });
   }
@@ -913,16 +929,20 @@
       adminMsg("กรอกชื่อ","err");
       return;
     }
-    if(players.some(p=>p.name.toLowerCase()===name.toLowerCase())){
+    let pls = getPlayers();
+    if(pls.some(p=>p.name.toLowerCase()===name.toLowerCase())){
       adminMsg("มีชื่อนี้อยู่แล้ว","err");
       return;
     }
-    addPlayer(name, score);
+    pls.push({name, score});
+    setPlayers(pls);
+    renderLeaderboardTable();
+    renderAdminPlayersList();
     adminMsg("เพิ่มสำเร็จ!","ok");
     addPlayerForm.reset();
   });
 
-  // Tabs and search
+  // --- Tab switching with sound ---
   const tabs = document.querySelectorAll(".tab");
   const contents = document.querySelectorAll(".content");
   const clickSound = new Audio("https://freesound.org/data/previews/256/256113_3263906-lq.mp3");
@@ -965,17 +985,18 @@
   });
   document.getElementById("searchInput").addEventListener("input", () => {
     const query = document.getElementById("searchInput").value.trim().toLowerCase();
+    const sorted = getPlayers().slice().sort((a, b) => b.score - a.score);
     const info = document.getElementById("rankInfo");
-    const foundIndex = players.findIndex(p => p.name.toLowerCase() === query);
+    const foundIndex = sorted.findIndex(p => p.name.toLowerCase() === query);
     if (foundIndex !== -1) {
-      const player = players[foundIndex];
+      const player = sorted[foundIndex];
       info.innerHTML = `<strong>${player.name}</strong> อยู่อันดับ <strong>#${foundIndex + 1}</strong> แรงค์: <span class="rank-tier ${getRank(player.score)}">${getRank(player.score)}</span> (${player.score} คะแนน)`;
     } else {
       info.textContent = "ไม่พบชื่อนี้ในตาราง";
     }
   });
 
-  // Tilt effect
+  // --- Tilt effect ---
   const container = document.getElementById("tiltContainer");
   let mouseX = 0, mouseY = 0, rotateX = 0, rotateY = 0;
   window.addEventListener("mousemove", e => {
@@ -991,7 +1012,7 @@
   }
   animate();
 
-  // BG particles
+  // --- Animated background particles ---
   const bg = document.getElementById("backgroundEffect");
   function randomBetween(min, max) {
     return Math.random() * (max - min) + min;
@@ -1006,7 +1027,11 @@
     p.style.animationDelay = `${randomBetween(0, 20)}s`;
     bg.appendChild(p);
   }
+
+  // --- Render contact-list copyable on load ---
   makeCopyableNames(document.getElementById('contactList'));
+
+  // -- On load
   renderLeaderboardTable();
 </script>
 </body>
