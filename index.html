@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Leaderboard with Admin, Queue, Contact & Sound + Animated BG</title>
+  <title>Lingkinpug Queue (Firebase Version)</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
     body {
@@ -28,47 +28,6 @@
       z-index: 0;
       overflow: hidden;
       background: radial-gradient(ellipse at center, #330000 0%, #110000 70%);
-    }
-    .particle {
-      position: absolute;
-      background: radial-gradient(circle, rgba(255,75,75,0.9) 0%, transparent 70%);
-      border-radius: 50%;
-      opacity: 0.2;
-      animation-timing-function: linear;
-      animation-iteration-count: infinite;
-    }
-    .particle.small {
-      width: 6px;
-      height: 6px;
-      animation-name: driftSmall;
-      animation-duration: 12s;
-    }
-    .particle.medium {
-      width: 10px;
-      height: 10px;
-      animation-name: driftMedium;
-      animation-duration: 18s;
-    }
-    .particle.large {
-      width: 14px;
-      height: 14px;
-      animation-name: driftLarge;
-      animation-duration: 25s;
-    }
-    @keyframes driftSmall {
-      0% { transform: translate(0, 0); opacity: 0.2;}
-      50% { transform: translate(10px, 10px); opacity: 0.4;}
-      100% { transform: translate(0, 0); opacity: 0.2;}
-    }
-    @keyframes driftMedium {
-      0% { transform: translate(0, 0); opacity: 0.15;}
-      50% { transform: translate(-15px, 15px); opacity: 0.3;}
-      100% { transform: translate(0, 0); opacity: 0.15;}
-    }
-    @keyframes driftLarge {
-      0% { transform: translate(0, 0); opacity: 0.1;}
-      50% { transform: translate(20px, -10px); opacity: 0.25;}
-      100% { transform: translate(0, 0); opacity: 0.1;}
     }
     .wrapper {
       max-width: 720px;
@@ -163,7 +122,6 @@
       letter-spacing: 0.1em;
       user-select: none;
     }
-    /* SCROLLABLE TABLE WRAPPER */
     .scrollable-table-wrapper {
       max-height: 340px;
       overflow-y: auto;
@@ -172,7 +130,6 @@
       background: none;
       scrollbar-gutter: stable;
     }
-    /* SCROLLABLE QUEUE WRAPPER */
     .scrollable-queue-wrapper {
       max-height: 360px;
       overflow-y: auto;
@@ -259,7 +216,6 @@
       color: #ff9999;
       text-decoration: underline;
     }
-    /* --- Queue page --- */
     .queue-form {
       max-width: 400px;
       margin: 0 auto 2rem auto;
@@ -312,7 +268,6 @@
       box-shadow: 0 0 20px #ff4b4b22;
       color: #ffc9c9;
       font-size: 1.1rem;
-      /* scrollable wrapper will be inside */
       overflow: hidden;
     }
     .queue-list-title {
@@ -349,7 +304,6 @@
       background: #ff9999;
       color: #111;
     }
-    /* Waiting screen */
     .queue-waiting {
       max-width: 400px;
       margin: 0 auto;
@@ -399,7 +353,6 @@
       background: #ff4b4b;
       color: #111;
     }
-    /* --- Admin --- */
     .admin-login-form,
     .admin-panel {
       max-width: 400px;
@@ -461,7 +414,6 @@
       width: 100%;
       margin-top: 1.2em;
       font-size: 1em;
-      /* scrollable player list */
       max-height: 260px;
       overflow-y: auto;
       background: none;
@@ -527,6 +479,9 @@
       .admin-panel .players-list { max-height: 160px; }
     }
   </style>
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 </head>
 <body>
   <div class="background-effect" id="backgroundEffect"></div>
@@ -538,7 +493,6 @@
       <div class="tab" data-tab="admin">Admin</div>
     </nav>
     <div class="container" id="tiltContainer">
-      <!-- Leaderboard content -->
       <div id="leaderboard" class="content active">
         <h1>Lingkinpug Leaderboard</h1>
         <input type="text" id="searchInput" placeholder="พิมพ์ชื่อของคุณ เช่น Ling" autocomplete="off" />
@@ -557,8 +511,6 @@
           </table>
         </div>
       </div>
-
-      <!-- Queue content -->
       <div id="queue" class="content">
         <h1>จองคิว</h1>
         <form class="queue-form" id="queueForm" autocomplete="off">
@@ -582,8 +534,6 @@
           <button class="leave-btn" id="leaveQueueBtn">ออกจากคิว</button>
         </div>
       </div>
-
-      <!-- Contact content -->
       <div id="contact" class="content">
         <h1>PK4</h1>
         <div class="contact-list">
@@ -593,8 +543,6 @@
           <p>📱 Facebook: <a href="https://web.facebook.com/110rr?locale=th_TH" target="_blank" rel="noopener noreferrer">Lingkinpug</a></p>
         </div>
       </div>
-
-      <!-- Admin content -->
       <div id="admin" class="content">
         <h1>Admin Panel</h1>
         <form class="admin-login-form" id="adminLoginForm" autocomplete="off">
@@ -629,10 +577,21 @@
     </div>
   </div>
 <script>
-  // --- Configurable admin password (change here) ---
-  const ADMIN_PASSWORD = "pugking2024"; // <-- เปลี่ยนรหัสที่นี่
+  // Firebase config (เปลี่ยนค่าเป็นของคุณ)
+  const firebaseConfig = {
+    apiKey: "AIzaSyCSAH5EAPC9stXeFPpG9L_FDlj-gta0OjU",
+    authDomain: "lingkinpug-queue.firebaseapp.com",
+    databaseURL: "https://lingkinpug-queue-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "lingkinpug-queue",
+    storageBucket: "lingkinpug-queue.appspot.com",
+    messagingSenderId: "962204289870",
+    appId: "1:962204289870:web:b69d6b9ec030776b1b2c1f",
+    measurementId: "G-DH6J2241S9"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
 
-  // --- Leaderboard logic ---
+  // --- Leaderboard (local only) ---
   const leaderboardKey = "lingkinpugLeaderboard";
   let players = null;
   function getPlayers() {
@@ -679,6 +638,179 @@
       tbody.appendChild(tr);
     });
   }
+
+  // --- Firebase Queue Logic ---
+  let allQueue = [];
+  let myName = localStorage.getItem("lingkinpugMyQueueName") || "";
+  let myQueueKey = localStorage.getItem("lingkinpugMyQueueKey") || "";
+
+  // Listen to queue (real-time)
+  db.ref('queue').on('value', snapshot => {
+    const arr = [];
+    snapshot.forEach(child => {
+      arr.push({ key: child.key, ...child.val() });
+    });
+    arr.sort((a, b) => a.time - b.time);
+    allQueue = arr;
+    renderQueue(arr);
+    renderAdminQueueList(arr);
+    updateQueueTabScreen();
+  });
+
+  function addToQueue(name, note) {
+    // Check duplicate
+    if (allQueue.some(q => q.name.toLowerCase() === name.toLowerCase())) {
+      queueMessage.textContent = "ชื่อนี้อยู่ในคิวแล้ว";
+      return;
+    }
+    const ref = db.ref('queue').push();
+    ref.set({ name, note, time: Date.now() });
+    // save my key
+    localStorage.setItem("lingkinpugMyQueueName", name);
+    localStorage.setItem("lingkinpugMyQueueKey", ref.key);
+    myName = name;
+    myQueueKey = ref.key;
+  }
+  function removeFromQueueByName(name) {
+    const found = allQueue.find(q => q.name === name);
+    if (found) db.ref('queue/' + found.key).remove();
+    if (myName === name) {
+      myName = "";
+      myQueueKey = "";
+      localStorage.removeItem("lingkinpugMyQueueName");
+      localStorage.removeItem("lingkinpugMyQueueKey");
+    }
+  }
+  function removeFromQueueByKey(key) {
+    db.ref('queue/' + key).remove();
+    if (myQueueKey === key) {
+      myName = "";
+      myQueueKey = "";
+      localStorage.removeItem("lingkinpugMyQueueName");
+      localStorage.removeItem("lingkinpugMyQueueKey");
+    }
+  }
+
+  // --- Queue UI ---
+  const queueForm = document.getElementById("queueForm");
+  const queueName = document.getElementById("queueName");
+  const queueNote = document.getElementById("queueNote");
+  const queueMessage = document.getElementById("queueMessage");
+  const queueListItems = document.getElementById("queueListItems");
+  const queueWaiting = document.getElementById("queueWaiting");
+  const leaveQueueBtn = document.getElementById("leaveQueueBtn");
+  const queueTab = document.querySelector('.tab[data-tab="queue"]');
+  const queueList = document.getElementById("queueList");
+
+  function renderQueue(queueArr) {
+    queueListItems.innerHTML = "";
+    if (!queueArr || queueArr.length === 0) {
+      queueListItems.innerHTML = "<li style='color:#d1a3a3;font-style:italic;'>- คิวยังว่าง -</li>";
+      return;
+    }
+    queueArr.forEach((item, idx) => {
+      queueListItems.innerHTML += `<li><strong>${item.name}</strong>${item.note ? ` <span style="color:#d1a3a3;">(${item.note})</span>` : ""}</li>`;
+    });
+  }
+
+  function showWaitingScreen(queueArr) {
+    queueForm.style.display = "none";
+    queueList.style.display = "none";
+    queueWaiting.style.display = "block";
+    // Find yourself
+    const idx = queueArr.findIndex(q => q.name === myName);
+    if (idx === -1) { showFormScreen(); return; }
+    queueWaiting.querySelector('.your-queue').innerHTML = `คุณอยู่ลำดับ <span style="color:#ff4b4b;font-size:1.2em;">#${idx+1}</span> ในคิว<br><span style="color:#d1a3a3;font-size:0.9em;">${queueArr[idx].note ? `(${queueArr[idx].note})` : ''}</span>`;
+    let others = "";
+    if (idx > 0) {
+      others += `คนที่รออยู่ก่อนหน้า:<br>`;
+      for(let i=Math.max(0,idx-2);i<idx;i++) {
+        others += `<span style="color:#ffb3b3;">#${i+1} ${queueArr[i].name}</span>${queueArr[i].note ? ` <span style="color:#d1a3a3">(${queueArr[i].note})</span>` : ""}<br>`;
+      }
+    }
+    queueWaiting.querySelector('.others').innerHTML = others;
+  }
+  function showFormScreen() {
+    queueForm.reset();
+    queueMessage.textContent = "";
+    queueWaiting.style.display = "none";
+    queueForm.style.display = "flex";
+    queueList.style.display = "block";
+    myName = "";
+    myQueueKey = "";
+    localStorage.removeItem("lingkinpugMyQueueName");
+    localStorage.removeItem("lingkinpugMyQueueKey");
+  }
+  function updateQueueTabScreen() {
+    if (myName && allQueue.some(q => q.name === myName)) {
+      showWaitingScreen(allQueue);
+    } else {
+      showFormScreen();
+    }
+  }
+  queueForm.addEventListener("submit", function(e) {
+    e.preventDefault();
+    const name = queueName.value.trim();
+    const note = queueNote.value.trim();
+    if (!name) {
+      queueMessage.textContent = "กรุณากรอกชื่อของคุณ";
+      return;
+    }
+    if (allQueue.length >= 50) {
+      queueMessage.textContent = "ขออภัย คิวเต็มแล้ว";
+      return;
+    }
+    addToQueue(name, note);
+  });
+  leaveQueueBtn.addEventListener("click", function() {
+    removeFromQueueByName(myName);
+    showFormScreen();
+    renderQueue(allQueue);
+  });
+  queueTab.addEventListener("click", updateQueueTabScreen);
+
+  // --- Admin logic ---
+  const ADMIN_PASSWORD = "pugking2024";
+  const adminTab = document.querySelector('.tab[data-tab="admin"]');
+  const adminLoginForm = document.getElementById("adminLoginForm");
+  const adminLoginMsg = document.getElementById("adminLoginMsg");
+  const adminPanel = document.getElementById("adminPanel");
+  const adminMsgDiv = document.getElementById("adminMsg");
+  const addPlayerForm = document.getElementById("addPlayerForm");
+  const addPlayerName = document.getElementById("addPlayerName");
+  const addPlayerScore = document.getElementById("addPlayerScore");
+  const adminQueueListItems = document.getElementById("adminQueueListItems");
+  const adminLogoutBtn = document.getElementById("adminLogoutBtn");
+
+  let isAdmin = false;
+  function adminMsg(msg, type) {
+    adminMsgDiv.textContent = msg;
+    adminMsgDiv.style.color = type === "ok" ? "#ffb3b3" : "#ff4b4b";
+    setTimeout(() => adminMsgDiv.textContent = "", 2000);
+  }
+  function renderAdminQueueList(queueArr) {
+    if (!queueArr) return;
+    adminQueueListItems.innerHTML = "";
+    if (queueArr.length === 0) {
+      adminQueueListItems.innerHTML = "<li style='color:#d1a3a3;font-style:italic;'>- คิวยังว่าง -</li>";
+      return;
+    }
+    queueArr.forEach((item, idx) => {
+      adminQueueListItems.innerHTML += `<li>
+        <span><strong>${item.name}</strong>${item.note ? ` <span style="color:#d1a3a3;">(${item.note})</span>` : ""}</span>
+        <span class="admin-queue-btns">
+          <button data-key="${item.key}" class="admin-remove-queue">ลบ</button>
+        </span>
+      </li>`;
+    });
+    adminQueueListItems.querySelectorAll(".admin-remove-queue").forEach(btn => {
+      btn.onclick = function() {
+        if (!confirm("ลบคิวนี้ใช่หรือไม่?")) return;
+        const key = btn.getAttribute("data-key");
+        removeFromQueueByKey(key);
+      };
+    });
+  }
   function renderAdminPlayersList() {
     const listDiv = document.getElementById("adminPlayersList");
     const sorted = getPlayers().slice().sort((a, b) => b.score - a.score);
@@ -696,7 +828,6 @@
     });
     html += "</tbody></table>";
     listDiv.innerHTML = html;
-    // Hook up save
     listDiv.querySelectorAll(".admin-save-player").forEach(btn => {
       btn.onclick = function(){
         const idx = parseInt(btn.getAttribute("data-index"));
@@ -711,7 +842,6 @@
         adminMsg("อัปเดตสำเร็จ!","ok");
       };
     });
-    // Hook up remove
     listDiv.querySelectorAll(".admin-remove-player").forEach(btn => {
       btn.onclick = function(){
         if (!confirm("ลบรายการนี้ใช่หรือไม่?")) return;
@@ -725,187 +855,12 @@
       };
     });
   }
-  // --- Queue logic (local only) ---
-  const queueKey = "lingkinpugQueueList";
-  const queueForm = document.getElementById("queueForm");
-  const queueName = document.getElementById("queueName");
-  const queueNote = document.getElementById("queueNote");
-  const queueMessage = document.getElementById("queueMessage");
-  const queueListItems = document.getElementById("queueListItems");
-  const queueWaiting = document.getElementById("queueWaiting");
-  const leaveQueueBtn = document.getElementById("leaveQueueBtn");
-  const queueTab = document.querySelector('.tab[data-tab="queue"]');
-  const queueList = document.getElementById("queueList");
-
-  // Track own queue name (for this device)
-  const myQueueNameKey = "lingkinpugMyQueueName";
-  let myName = localStorage.getItem(myQueueNameKey) || "";
-
-  function getQueue() {
-    try {
-      return JSON.parse(localStorage.getItem(queueKey)) || [];
-    } catch {
-      return [];
-    }
-  }
-  function setQueue(q) {
-    localStorage.setItem(queueKey, JSON.stringify(q));
-  }
-  function renderQueue() {
-    const queue = getQueue();
-    queueListItems.innerHTML = "";
-    if (queue.length === 0) {
-      queueListItems.innerHTML = "<li style='color:#d1a3a3;font-style:italic;'>- คิวยังว่าง -</li>";
-      return;
-    }
-    queue.forEach((item, idx) => {
-      queueListItems.innerHTML += `<li><strong>${item.name}</strong>${item.note ? ` <span style="color:#d1a3a3;">(${item.note})</span>` : ""}</li>`;
-    });
-  }
-  function showWaitingScreen() {
-    // Find yourself in the queue
-    const queue = getQueue();
-    const idx = queue.findIndex(q => q.name === myName);
-    if (idx === -1) {
-      showFormScreen();
-      return;
-    }
-    queueForm.style.display = "none";
-    queueList.style.display = "none";
-    queueWaiting.style.display = "block";
-
-    // Show your queue info
-    queueWaiting.querySelector('.your-queue').innerHTML = `คุณอยู่ลำดับ <span style="color:#ff4b4b;font-size:1.2em;">#${idx+1}</span> ในคิว<br><span style="color:#d1a3a3;font-size:0.9em;">${queue[idx].note ? `(${queue[idx].note})` : ''}</span>`;
-
-    // Show next 2 in front (if any)
-    let others = "";
-    if (idx > 0) {
-      others += `คนที่รออยู่ก่อนหน้า:<br>`;
-      for(let i=Math.max(0,idx-2);i<idx;i++) {
-        others += `<span style="color:#ffb3b3;">#${i+1} ${queue[i].name}</span>${queue[i].note ? ` <span style="color:#d1a3a3">(${queue[i].note})</span>` : ""}<br>`;
-      }
-    }
-    queueWaiting.querySelector('.others').innerHTML = others;
-  }
-  function showFormScreen() {
-    queueForm.reset();
-    queueMessage.textContent = "";
-    queueWaiting.style.display = "none";
-    queueForm.style.display = "flex";
-    queueList.style.display = "block";
-    myName = "";
-    localStorage.removeItem(myQueueNameKey);
-  }
-  function updateQueueTabScreen() {
-    renderQueue();
-    if (myName && getQueue().some(q => q.name === myName)) {
-      showWaitingScreen();
-    } else {
-      showFormScreen();
-    }
-  }
-  queueForm.addEventListener("submit", function(e) {
-    e.preventDefault();
-    const name = queueName.value.trim();
-    const note = queueNote.value.trim();
-    if (!name) {
-      queueMessage.textContent = "กรุณากรอกชื่อของคุณ";
-      return;
-    }
-    let queue = getQueue();
-    if (queue.length >= 50) {
-      queueMessage.textContent = "ขออภัย คิวเต็มแล้ว";
-      return;
-    }
-    if (queue.some(item => item.name.toLowerCase() === name.toLowerCase())) {
-      queueMessage.textContent = "ชื่อนี้อยู่ในคิวแล้ว";
-      return;
-    }
-    queue.push({ name, note });
-    setQueue(queue);
-    localStorage.setItem(myQueueNameKey, name);
-    myName = name;
-    updateQueueTabScreen();
-  });
-  leaveQueueBtn.addEventListener("click", function() {
-    let queue = getQueue();
-    queue = queue.filter(q => q.name !== myName);
-    setQueue(queue);
-    showFormScreen();
-    renderQueue();
-  });
-  window.addEventListener("storage", function(e){
-    if (e.key === queueKey || e.key === leaderboardKey) {
-      updateQueueTabScreen();
-      renderLeaderboardTable();
-    }
-  });
-  queueTab.addEventListener("click", updateQueueTabScreen);
-  // On page load, update once
-  updateQueueTabScreen();
-
-  // --- Admin logic ---
-  // Elements
-  const adminTab = document.querySelector('.tab[data-tab="admin"]');
-  const adminLoginForm = document.getElementById("adminLoginForm");
-  const adminLoginMsg = document.getElementById("adminLoginMsg");
-  const adminPanel = document.getElementById("adminPanel");
-  const adminMsgDiv = document.getElementById("adminMsg");
-  const addPlayerForm = document.getElementById("addPlayerForm");
-  const addPlayerName = document.getElementById("addPlayerName");
-  const addPlayerScore = document.getElementById("addPlayerScore");
-  const adminQueueListItems = document.getElementById("adminQueueListItems");
-  const adminLogoutBtn = document.getElementById("adminLogoutBtn");
-
-  let isAdmin = false;
-
-  function adminMsg(msg, type) {
-    adminMsgDiv.textContent = msg;
-    adminMsgDiv.style.color = type === "ok" ? "#ffb3b3" : "#ff4b4b";
-    setTimeout(() => adminMsgDiv.textContent = "", 2000);
-  }
-
-  function renderAdminQueueList() {
-    const queue = getQueue();
-    adminQueueListItems.innerHTML = "";
-    if (queue.length === 0) {
-      adminQueueListItems.innerHTML = "<li style='color:#d1a3a3;font-style:italic;'>- คิวยังว่าง -</li>";
-      return;
-    }
-    queue.forEach((item, idx) => {
-      adminQueueListItems.innerHTML += `<li>
-        <span><strong>${item.name}</strong>${item.note ? ` <span style="color:#d1a3a3;">(${item.note})</span>` : ""}</span>
-        <span class="admin-queue-btns">
-          <button data-index="${idx}" class="admin-remove-queue">ลบ</button>
-        </span>
-      </li>`;
-    });
-    // Hook up remove
-    adminQueueListItems.querySelectorAll(".admin-remove-queue").forEach(btn => {
-      btn.onclick = function() {
-        if (!confirm("ลบคิวนี้ใช่หรือไม่?")) return;
-        const idx = parseInt(btn.getAttribute("data-index"));
-        let queue = getQueue();
-        if(queue[idx].name === myName){
-          myName = "";
-          localStorage.removeItem(myQueueNameKey);
-        }
-        queue.splice(idx, 1);
-        setQueue(queue);
-        renderAdminQueueList();
-        adminMsg("ลบคิวสำเร็จ!","ok");
-        updateQueueTabScreen();
-      };
-    });
-  }
-
-  // Admin login
   function showAdminPanel() {
     isAdmin = true;
     adminLoginForm.style.display = "none";
     adminPanel.style.display = "flex";
     renderAdminPlayersList();
-    renderAdminQueueList();
+    renderAdminQueueList(allQueue);
   }
   function showAdminLogin() {
     isAdmin = false;
@@ -927,8 +882,6 @@
   adminLogoutBtn.addEventListener("click", function(){
     showAdminLogin();
   });
-
-  // Add player
   addPlayerForm.addEventListener("submit", function(e){
     e.preventDefault();
     const name = addPlayerName.value.trim();
@@ -991,8 +944,6 @@
       typingSound.play();
     }
   });
-
-  // --- Leaderboard search ---
   document.getElementById("searchInput").addEventListener("input", () => {
     const query = document.getElementById("searchInput").value.trim().toLowerCase();
     const sorted = getPlayers().slice().sort((a, b) => b.score - a.score);
