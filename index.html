@@ -2,10 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Leaderboard with Contact Menu & Sound + Animated BG</title>
+  <title>Leaderboard with Admin, Queue, Contact & Sound + Animated BG</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
-
     body {
       margin: 0;
       padding: 3rem;
@@ -22,8 +21,6 @@
       position: relative;
       overflow: hidden;
     }
-
-    /* เอฟเฟกต์พื้นหลังอนุภาค */
     .background-effect {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
@@ -32,7 +29,6 @@
       overflow: hidden;
       background: radial-gradient(ellipse at center, #330000 0%, #110000 70%);
     }
-
     .particle {
       position: absolute;
       background: radial-gradient(circle, rgba(255,75,75,0.9) 0%, transparent 70%);
@@ -41,29 +37,24 @@
       animation-timing-function: linear;
       animation-iteration-count: infinite;
     }
-
-    /* สร้างหลายขนาด particle */
     .particle.small {
       width: 6px;
       height: 6px;
       animation-name: driftSmall;
       animation-duration: 12s;
     }
-
     .particle.medium {
       width: 10px;
       height: 10px;
       animation-name: driftMedium;
       animation-duration: 18s;
     }
-
     .particle.large {
       width: 14px;
       height: 14px;
       animation-name: driftLarge;
       animation-duration: 25s;
     }
-
     @keyframes driftSmall {
       0% { transform: translate(0, 0); opacity: 0.2;}
       50% { transform: translate(10px, 10px); opacity: 0.4;}
@@ -79,15 +70,12 @@
       50% { transform: translate(20px, -10px); opacity: 0.25;}
       100% { transform: translate(0, 0); opacity: 0.1;}
     }
-
     .wrapper {
       max-width: 720px;
       width: 90vw;
       position: relative;
       z-index: 1;
     }
-
-    /* เมนูแท็บด้านบน */
     .menu {
       display: flex;
       justify-content: center;
@@ -95,7 +83,6 @@
       gap: 2rem;
       user-select: none;
     }
-
     .tab {
       padding: 12px 30px;
       border-radius: 30px;
@@ -104,53 +91,35 @@
       font-size: 1.1rem;
       color: #ff4b4b;
       background: #220000;
-      box-shadow:
-        0 0 8px #ff4b4b88;
+      box-shadow: 0 0 8px #ff4b4b88;
       transition: all 0.3s ease;
       border: 2px solid transparent;
       user-select: none;
       user-drag: none;
     }
-
-    .tab:hover {
+    .tab:hover, .tab.active {
       background: #ff4b4b;
       color: #111;
       box-shadow: 0 0 20px #ff4b4bcc;
       border-color: #ff4b4b;
     }
-
-    .tab.active {
-      background: #ff4b4b;
-      color: #111;
-      box-shadow: 0 0 20px #ff4b4bcc;
-      border-color: #ff4b4b;
-    }
-
-    /* container ใช้สำหรับ content ทั้งสองแท็บ */
     .container {
       background: linear-gradient(145deg, #2b0000, #480000);
       padding: 2rem 3rem;
       border-radius: 20px;
-      box-shadow:
-        0 0 20px #ff1e1e88,
-        inset 0 0 40px #ff4b4baa;
+      box-shadow: 0 0 20px #ff1e1e88, inset 0 0 40px #ff4b4baa;
       transform-style: preserve-3d;
       transition: box-shadow 0.3s ease;
       user-select: none;
       transform: rotateX(0deg) rotateY(0deg);
     }
-
-    /* ซ่อนเนื้อหาที่ไม่ได้เลือก */
     .content {
       display: none;
       color: #ffc9c9;
     }
-
     .content.active {
       display: block;
     }
-
-    /* --- ส่วน Leaderboard (เหมือนเดิม) --- */
     h1 {
       font-weight: 700;
       font-size: 3rem;
@@ -161,8 +130,7 @@
       user-select: none;
       text-align: center;
     }
-
-    input[type="text"] {
+    input[type="text"], input[type="number"], input[type="password"] {
       width: 100%;
       padding: 14px 20px;
       font-size: 1.2rem;
@@ -176,18 +144,15 @@
       text-align: center;
       user-select: text;
     }
-
-    input[type="text"]::placeholder {
+    input[type="text"]::placeholder, input[type="number"]::placeholder, input[type="password"]::placeholder {
       color: #d1a3a3;
     }
-
-    input[type="text"]:focus {
+    input[type="text"]:focus, input[type="number"]:focus, input[type="password"]:focus {
       background-color: #ff4b4b;
       color: #111;
       box-shadow: 0 0 20px #ff4b4bcc;
       border-color: #ff4b4b;
     }
-
     .rank-info {
       font-size: 1.3rem;
       margin-bottom: 3rem;
@@ -198,17 +163,46 @@
       letter-spacing: 0.1em;
       user-select: none;
     }
-
+    /* SCROLLABLE TABLE WRAPPER */
+    .scrollable-table-wrapper {
+      max-height: 340px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      margin-bottom: 1.5em;
+      background: none;
+      scrollbar-gutter: stable;
+    }
+    /* SCROLLABLE QUEUE WRAPPER */
+    .scrollable-queue-wrapper {
+      max-height: 360px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      background: none;
+      scrollbar-gutter: stable;
+    }
+    .scrollable-table-wrapper::-webkit-scrollbar,
+    .scrollable-queue-wrapper::-webkit-scrollbar {
+      width: 8px;
+      background: transparent;
+    }
+    .scrollable-table-wrapper::-webkit-scrollbar-thumb,
+    .scrollable-queue-wrapper::-webkit-scrollbar-thumb {
+      background: linear-gradient(145deg, #ff4b4b66, #ff4b4b22);
+      border-radius: 20px;
+    }
+    .scrollable-table-wrapper,
+    .scrollable-queue-wrapper {
+      scrollbar-width: thin;
+      scrollbar-color: #ff4b4b44 transparent;
+    }
     table {
       width: 100%;
       border-collapse: collapse;
       border-radius: 12px;
       overflow: hidden;
-      box-shadow:
-        0 8px 20px rgba(255, 75, 75, 0.7);
+      box-shadow: 0 8px 20px rgba(255, 75, 75, 0.7);
       background: #3c0000;
     }
-
     th, td {
       padding: 18px 24px;
       text-align: left;
@@ -217,14 +211,12 @@
       font-size: 1.1rem;
       color: #ffc9c9;
     }
-
     th {
       background-color: #550000;
       color: #ffb3b3;
       letter-spacing: 0.15em;
       font-weight: 700;
     }
-
     tbody tr:hover {
       background-color: #ff4b4bcc;
       color: #111;
@@ -232,7 +224,6 @@
       cursor: pointer;
       transition: background-color 0.3s ease;
     }
-
     .rank-tier {
       display: inline-block;
       padding: 6px 18px;
@@ -245,15 +236,11 @@
       box-shadow: 0 0 10px #ff4b4bcc;
       user-select: none;
     }
-
-    /* Rank tiers with subtle variations */
     .S { background-color: #ff6666; box-shadow: 0 0 15px #ff6666cc; }
     .A { background-color: #ff4b4b; }
     .B { background-color: #cc3a3a; }
     .C { background-color: #992828; }
     .D { background-color: #661818; }
-
-    /* --- Contact tab styling --- */
     .contact-list {
       font-size: 1.2rem;
       line-height: 2;
@@ -262,70 +249,338 @@
       text-align: center;
       color: #ffc9c9;
     }
-
     .contact-list a {
       color: #ff4b4b;
       text-decoration: none;
       font-weight: 700;
       transition: color 0.3s ease;
     }
-
     .contact-list a:hover {
       color: #ff9999;
       text-decoration: underline;
     }
-
+    /* --- Queue page --- */
+    .queue-form {
+      max-width: 400px;
+      margin: 0 auto 2rem auto;
+      background: #2b000088;
+      padding: 1.5rem 2rem 2rem 2rem;
+      border-radius: 20px;
+      box-shadow: 0 0 20px #ff4b4b22, 0 0 0 #000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+    .queue-form label {
+      font-weight: 600;
+      color: #ffb3b3;
+      font-size: 1.1rem;
+      margin-bottom: 0.2rem;
+      align-self: flex-start;
+    }
+    .queue-form button {
+      margin-top: 1rem;
+      background: #ff4b4b;
+      color: #fff;
+      font-weight: 700;
+      padding: 12px 32px;
+      border: none;
+      border-radius: 30px;
+      font-size: 1.1rem;
+      box-shadow: 0 0 10px #ff4b4baa;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .queue-form button:hover {
+      background: #ff9999;
+      color: #111;
+    }
+    .queue-message {
+      margin-bottom: 1rem;
+      text-align: center;
+      color: #ffb3b3;
+      font-size: 1.1rem;
+      min-height: 1.4em;
+    }
+    .queue-list {
+      max-width: 400px;
+      margin: 0 auto;
+      background: #440000cc;
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: 0 0 20px #ff4b4b22;
+      color: #ffc9c9;
+      font-size: 1.1rem;
+      /* scrollable wrapper will be inside */
+      overflow: hidden;
+    }
+    .queue-list-title {
+      font-weight: 700;
+      margin-bottom: 0.5em;
+      color: #ff4b4b;
+      text-align: center;
+      letter-spacing: 0.1em;
+    }
+    .queue-list ol {
+      padding-left: 1.3em;
+      margin: 0;
+    }
+    .queue-list li {
+      padding: 0.3em 0;
+      border-bottom: 1px solid #66181833;
+      word-break: break-word;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .queue-list .admin-queue-btns button {
+      margin-left: 0.6em;
+      background: #ff4b4b;
+      color: #fff;
+      border: none;
+      border-radius: 18px;
+      padding: 2px 10px;
+      font-size: 0.95em;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .queue-list .admin-queue-btns button:hover {
+      background: #ff9999;
+      color: #111;
+    }
+    /* Waiting screen */
+    .queue-waiting {
+      max-width: 400px;
+      margin: 0 auto;
+      background: #220000dd;
+      border-radius: 22px;
+      padding: 2.5rem 2rem 2rem 2rem;
+      box-shadow: 0 0 30px #ff4b4b44;
+      color: #ffc9c9;
+      font-size: 1.2rem;
+      text-align: center;
+      animation: fadeIn 0.7s;
+      display: none;
+    }
+    .queue-waiting h2 {
+      color: #ff4b4b;
+      margin-bottom: 1rem;
+      font-size: 2.1rem;
+      letter-spacing: 2px;
+      text-shadow: 0 0 8px #ff4b4bcc;
+    }
+    .queue-waiting .your-queue {
+      margin: 1.5rem 0 0.7rem 0;
+      font-weight: bold;
+      font-size: 1.2em;
+      color: #fff;
+    }
+    .queue-waiting .others {
+      color: #ffb3b3;
+      margin-top: 1.3em;
+      font-size: .95em;
+      opacity: .85;
+    }
+    .queue-waiting .leave-btn {
+      margin-top: 2em;
+      background: #772222;
+      color: #fff;
+      font-weight: 700;
+      padding: 10px 28px;
+      border: none;
+      border-radius: 30px;
+      font-size: 1em;
+      box-shadow: 0 0 7px #ff4b4baa;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .queue-waiting .leave-btn:hover {
+      background: #ff4b4b;
+      color: #111;
+    }
+    /* --- Admin --- */
+    .admin-login-form,
+    .admin-panel {
+      max-width: 400px;
+      margin: 0 auto 2rem auto;
+      background: #2b000088;
+      padding: 2rem 2rem 2rem 2rem;
+      border-radius: 20px;
+      box-shadow: 0 0 20px #ff4b4b22, 0 0 0 #000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+    .admin-login-form label {
+      font-weight: 600;
+      color: #ffb3b3;
+      font-size: 1.1rem;
+      margin-bottom: 0.2rem;
+      align-self: flex-start;
+    }
+    .admin-login-form button,
+    .admin-panel button {
+      margin-top: 1rem;
+      background: #ff4b4b;
+      color: #fff;
+      font-weight: 700;
+      padding: 12px 32px;
+      border: none;
+      border-radius: 30px;
+      font-size: 1.1rem;
+      box-shadow: 0 0 10px #ff4b4baa;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .admin-login-form button:hover,
+    .admin-panel button:hover {
+      background: #ff9999;
+      color: #111;
+    }
+    .admin-message {
+      color: #ffb3b3;
+      min-height: 1.5em;
+      text-align: center;
+      font-size: 1.1em;
+    }
+    .admin-panel {
+      gap: 18px;
+    }
+    .admin-panel label {
+      align-self: flex-start;
+      color: #ffb3b3;
+      font-weight: 600;
+      margin-bottom: 0.2rem;
+    }
+    .admin-panel input[type="text"], .admin-panel input[type="number"] {
+      margin-bottom: 0.5rem;
+    }
+    .admin-panel .players-list {
+      width: 100%;
+      margin-top: 1.2em;
+      font-size: 1em;
+      /* scrollable player list */
+      max-height: 260px;
+      overflow-y: auto;
+      background: none;
+      scrollbar-gutter: stable;
+    }
+    .admin-panel .players-list::-webkit-scrollbar {
+      width: 8px;
+      background: transparent;
+    }
+    .admin-panel .players-list::-webkit-scrollbar-thumb {
+      background: linear-gradient(145deg, #ff4b4b66, #ff4b4b22);
+      border-radius: 20px;
+    }
+    .admin-panel .players-list {
+      scrollbar-width: thin;
+      scrollbar-color: #ff4b4b44 transparent;
+    }
+    .admin-panel .players-list table {
+      width: 100%;
+      background: #4f0000;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 1em;
+      box-shadow: 0 0 10px #ff4b4b44;
+    }
+    .admin-panel .players-list th, .admin-panel .players-list td {
+      padding: 10px 8px;
+      font-size: 0.98em;
+      color: #ffc9c9;
+      text-align: center;
+    }
+    .admin-panel .players-list th {
+      background: #660000;
+      color: #ffb3b3;
+    }
+    .admin-panel .players-list button {
+      background: #ff4b4b;
+      color: #fff;
+      border: none;
+      border-radius: 16px;
+      padding: 2px 10px;
+      font-size: 0.95em;
+      cursor: pointer;
+      margin: 0 2px;
+      transition: background 0.15s;
+    }
+    .admin-panel .players-list button:hover {
+      background: #ff9999;
+      color: #111;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(.98);}
+      to   { opacity: 1; transform: scale(1);}
+    }
     @media (max-width: 600px) {
-      h1 {
-        font-size: 2.2rem;
-      }
-      th, td {
-        font-size: 0.9rem;
-        padding: 14px 16px;
-      }
-      input[type="text"] {
-        font-size: 1rem;
-        padding: 12px 16px;
-      }
-      .tab {
-        padding: 10px 20px;
-        font-size: 1rem;
-      }
-      .contact-list {
-        font-size: 1rem;
-        line-height: 1.6;
-      }
+      h1 { font-size: 2.2rem; }
+      th, td { font-size: 0.9rem; padding: 14px 16px; }
+      input[type="text"], input[type="number"], input[type="password"] { font-size: 1rem; padding: 12px 16px; }
+      .tab { padding: 10px 20px; font-size: 1rem; }
+      .contact-list { font-size: 1rem; line-height: 1.6; }
+      .queue-form, .queue-list, .queue-waiting, .admin-panel, .admin-login-form { padding: 1rem; }
+      .scrollable-table-wrapper, .scrollable-queue-wrapper { max-height: 200px; }
+      .admin-panel .players-list { max-height: 160px; }
     }
   </style>
 </head>
 <body>
   <div class="background-effect" id="backgroundEffect"></div>
-
   <div class="wrapper">
     <nav class="menu">
       <div class="tab active" data-tab="leaderboard">Leaderboard</div>
+      <div class="tab" data-tab="queue">จองคิว</div>
       <div class="tab" data-tab="contact">Contact</div>
+      <div class="tab" data-tab="admin">Admin</div>
     </nav>
-
     <div class="container" id="tiltContainer">
       <!-- Leaderboard content -->
       <div id="leaderboard" class="content active">
         <h1>Lingkinpug Leaderboard</h1>
-
         <input type="text" id="searchInput" placeholder="พิมพ์ชื่อของคุณ เช่น Ling" autocomplete="off" />
         <div class="rank-info" id="rankInfo">กรอกชื่อด้านบนเพื่อดูอันดับของคุณ</div>
+        <div class="scrollable-table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>no</th>
+                <th>name</th>
+                <th>score</th>
+                <th>rank</th>
+              </tr>
+            </thead>
+            <tbody id="leaderboardBody"></tbody>
+          </table>
+        </div>
+      </div>
 
-        <table>
-          <thead>
-            <tr>
-              <th>no</th>
-              <th>name</th>
-              <th>score</th>
-              <th>rank</th>
-            </tr>
-          </thead>
-          <tbody id="leaderboardBody"></tbody>
-        </table>
+      <!-- Queue content -->
+      <div id="queue" class="content">
+        <h1>จองคิว</h1>
+        <form class="queue-form" id="queueForm" autocomplete="off">
+          <div class="queue-message" id="queueMessage"></div>
+          <label for="queueName">ชื่อของคุณ</label>
+          <input type="text" id="queueName" maxlength="24" placeholder="กรอกชื่อเล่น/ชื่อในเกม" required />
+          <label for="queueNote">หมายเหตุ (ถ้ามี)</label>
+          <input type="text" id="queueNote" maxlength="40" placeholder="เช่น ขอโค้ด/สอนเล่น ฯลฯ" />
+          <button type="submit">จองคิว</button>
+        </form>
+        <div class="queue-list" id="queueList">
+          <div class="queue-list-title">รายชื่อในคิว</div>
+          <div class="scrollable-queue-wrapper">
+            <ol id="queueListItems"></ol>
+          </div>
+        </div>
+        <div class="queue-waiting" id="queueWaiting">
+          <h2>รอคิว...</h2>
+          <div class="your-queue"></div>
+          <div class="others"></div>
+          <button class="leave-btn" id="leaveQueueBtn">ออกจากคิว</button>
+        </div>
       </div>
 
       <!-- Contact content -->
@@ -338,20 +593,69 @@
           <p>📱 Facebook: <a href="https://web.facebook.com/110rr?locale=th_TH" target="_blank" rel="noopener noreferrer">Lingkinpug</a></p>
         </div>
       </div>
+
+      <!-- Admin content -->
+      <div id="admin" class="content">
+        <h1>Admin Panel</h1>
+        <form class="admin-login-form" id="adminLoginForm" autocomplete="off">
+          <div class="admin-message" id="adminLoginMsg"></div>
+          <label for="adminPass">รหัสสำหรับผู้จัด</label>
+          <input type="password" id="adminPass" placeholder="กรอกรหัสผู้จัด" required />
+          <button type="submit">เข้าสู่ระบบ</button>
+        </form>
+        <div class="admin-panel" id="adminPanel" style="display: none;">
+          <div class="admin-message" id="adminMsg"></div>
+          <div>
+            <label style="font-size:1.15em;">จัดการ Leaderboard</label>
+            <form id="addPlayerForm" style="display:flex; gap:8px;">
+              <input type="text" id="addPlayerName" placeholder="ชื่อ" maxlength="24" required />
+              <input type="number" id="addPlayerScore" placeholder="คะแนน" min="0" style="width:80px;" required />
+              <button type="submit" style="margin:0;">เพิ่ม</button>
+            </form>
+            <div class="players-list" id="adminPlayersList"></div>
+          </div>
+          <div>
+            <label style="font-size:1.15em;">จัดการคิว</label>
+            <div class="queue-list" id="adminQueueList" style="margin-top:0;">
+              <div class="queue-list-title">รายชื่อในคิว</div>
+              <div class="scrollable-queue-wrapper">
+                <ol id="adminQueueListItems"></ol>
+              </div>
+            </div>
+          </div>
+          <button id="adminLogoutBtn" type="button">ออกจากระบบ</button>
+        </div>
+      </div>
     </div>
   </div>
-
 <script>
-  // Player data
-  const players = [
-    { name: "TAM", score: 1800 },
-    { name: "Ling", score: 1200 },
-    { name: "Leon", score: 1200 },
-    { name: "kuy", score: 350 },
-    { name: "hee", score: 350 },
-    { name: "Guy", score: 1 }
-  ];
+  // --- Configurable admin password (change here) ---
+  const ADMIN_PASSWORD = "pugking2024"; // <-- เปลี่ยนรหัสที่นี่
 
+  // --- Leaderboard logic ---
+  const leaderboardKey = "lingkinpugLeaderboard";
+  let players = null;
+  function getPlayers() {
+    if (players) return players;
+    try {
+      let raw = localStorage.getItem(leaderboardKey);
+      if (!raw) return [
+        { name: "TAM", score: 1800 },
+        { name: "Ling", score: 1200 },
+        { name: "Leon", score: 1200 },
+        { name: "kuy", score: 350 },
+        { name: "hee", score: 350 },
+        { name: "Guy", score: 1 }
+      ];
+      return JSON.parse(raw);
+    } catch {
+      return [];
+    }
+  }
+  function setPlayers(pls) {
+    players = pls;
+    localStorage.setItem(leaderboardKey, JSON.stringify(pls));
+  }
   function getRank(score) {
     if (score >= 1500) return "S";
     if (score >= 1200) return "A";
@@ -359,30 +663,340 @@
     if (score >= 400) return "C";
     return "D";
   }
+  function renderLeaderboardTable() {
+    const sorted = getPlayers().slice().sort((a, b) => b.score - a.score);
+    const tbody = document.getElementById("leaderboardBody");
+    tbody.innerHTML = "";
+    sorted.forEach((player, index) => {
+      const rank = getRank(player.score);
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>#${index + 1}</td>
+        <td>${player.name}</td>
+        <td>${player.score}</td>
+        <td><span class="rank-tier ${rank}">${rank}</span></td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+  function renderAdminPlayersList() {
+    const listDiv = document.getElementById("adminPlayersList");
+    const sorted = getPlayers().slice().sort((a, b) => b.score - a.score);
+    let html = `<table><thead>
+      <tr><th>ลำดับ</th><th>ชื่อ</th><th>คะแนน</th><th>แก้ไข</th><th>ลบ</th></tr>
+      </thead><tbody>`;
+    sorted.forEach((player, index) => {
+      html += `<tr>
+        <td>#${index + 1}</td>
+        <td><input data-index="${index}" data-field="name" value="${player.name}" maxlength="24" style="width:85px;background:#550000;color:#ffc9c9;text-align:center;border-radius:12px;border:1px solid #772222;" /></td>
+        <td><input data-index="${index}" data-field="score" type="number" value="${player.score}" min="0" style="width:65px;background:#550000;color:#ffc9c9;text-align:center;border-radius:12px;border:1px solid #772222;" /></td>
+        <td><button data-index="${index}" class="admin-save-player">บันทึก</button></td>
+        <td><button data-index="${index}" class="admin-remove-player">ลบ</button></td>
+      </tr>`;
+    });
+    html += "</tbody></table>";
+    listDiv.innerHTML = html;
+    // Hook up save
+    listDiv.querySelectorAll(".admin-save-player").forEach(btn => {
+      btn.onclick = function(){
+        const idx = parseInt(btn.getAttribute("data-index"));
+        const nameInput = listDiv.querySelector(`input[data-index="${idx}"][data-field="name"]`);
+        const scoreInput = listDiv.querySelector(`input[data-index="${idx}"][data-field="score"]`);
+        let pls = getPlayers();
+        pls[idx].name = nameInput.value.trim().substring(0,24);
+        pls[idx].score = parseInt(scoreInput.value)||0;
+        setPlayers(pls);
+        renderLeaderboardTable();
+        renderAdminPlayersList();
+        adminMsg("อัปเดตสำเร็จ!","ok");
+      };
+    });
+    // Hook up remove
+    listDiv.querySelectorAll(".admin-remove-player").forEach(btn => {
+      btn.onclick = function(){
+        if (!confirm("ลบรายการนี้ใช่หรือไม่?")) return;
+        const idx = parseInt(btn.getAttribute("data-index"));
+        let pls = getPlayers();
+        pls.splice(idx,1);
+        setPlayers(pls);
+        renderLeaderboardTable();
+        renderAdminPlayersList();
+        adminMsg("ลบสำเร็จ!","ok");
+      };
+    });
+  }
+  // --- Queue logic (local only) ---
+  const queueKey = "lingkinpugQueueList";
+  const queueForm = document.getElementById("queueForm");
+  const queueName = document.getElementById("queueName");
+  const queueNote = document.getElementById("queueNote");
+  const queueMessage = document.getElementById("queueMessage");
+  const queueListItems = document.getElementById("queueListItems");
+  const queueWaiting = document.getElementById("queueWaiting");
+  const leaveQueueBtn = document.getElementById("leaveQueueBtn");
+  const queueTab = document.querySelector('.tab[data-tab="queue"]');
+  const queueList = document.getElementById("queueList");
 
-  // Sort players by score descending
-  const sorted = players.slice().sort((a, b) => b.score - a.score);
+  // Track own queue name (for this device)
+  const myQueueNameKey = "lingkinpugMyQueueName";
+  let myName = localStorage.getItem(myQueueNameKey) || "";
 
-  // Render leaderboard table
-  const tbody = document.getElementById("leaderboardBody");
-  sorted.forEach((player, index) => {
-    const rank = getRank(player.score);
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>#${index + 1}</td>
-      <td>${player.name}</td>
-      <td>${player.score}</td>
-      <td><span class="rank-tier ${rank}">${rank}</span></td>
-    `;
-    tbody.appendChild(tr);
+  function getQueue() {
+    try {
+      return JSON.parse(localStorage.getItem(queueKey)) || [];
+    } catch {
+      return [];
+    }
+  }
+  function setQueue(q) {
+    localStorage.setItem(queueKey, JSON.stringify(q));
+  }
+  function renderQueue() {
+    const queue = getQueue();
+    queueListItems.innerHTML = "";
+    if (queue.length === 0) {
+      queueListItems.innerHTML = "<li style='color:#d1a3a3;font-style:italic;'>- คิวยังว่าง -</li>";
+      return;
+    }
+    queue.forEach((item, idx) => {
+      queueListItems.innerHTML += `<li><strong>${item.name}</strong>${item.note ? ` <span style="color:#d1a3a3;">(${item.note})</span>` : ""}</li>`;
+    });
+  }
+  function showWaitingScreen() {
+    // Find yourself in the queue
+    const queue = getQueue();
+    const idx = queue.findIndex(q => q.name === myName);
+    if (idx === -1) {
+      showFormScreen();
+      return;
+    }
+    queueForm.style.display = "none";
+    queueList.style.display = "none";
+    queueWaiting.style.display = "block";
+
+    // Show your queue info
+    queueWaiting.querySelector('.your-queue').innerHTML = `คุณอยู่ลำดับ <span style="color:#ff4b4b;font-size:1.2em;">#${idx+1}</span> ในคิว<br><span style="color:#d1a3a3;font-size:0.9em;">${queue[idx].note ? `(${queue[idx].note})` : ''}</span>`;
+
+    // Show next 2 in front (if any)
+    let others = "";
+    if (idx > 0) {
+      others += `คนที่รออยู่ก่อนหน้า:<br>`;
+      for(let i=Math.max(0,idx-2);i<idx;i++) {
+        others += `<span style="color:#ffb3b3;">#${i+1} ${queue[i].name}</span>${queue[i].note ? ` <span style="color:#d1a3a3">(${queue[i].note})</span>` : ""}<br>`;
+      }
+    }
+    queueWaiting.querySelector('.others').innerHTML = others;
+  }
+  function showFormScreen() {
+    queueForm.reset();
+    queueMessage.textContent = "";
+    queueWaiting.style.display = "none";
+    queueForm.style.display = "flex";
+    queueList.style.display = "block";
+    myName = "";
+    localStorage.removeItem(myQueueNameKey);
+  }
+  function updateQueueTabScreen() {
+    renderQueue();
+    if (myName && getQueue().some(q => q.name === myName)) {
+      showWaitingScreen();
+    } else {
+      showFormScreen();
+    }
+  }
+  queueForm.addEventListener("submit", function(e) {
+    e.preventDefault();
+    const name = queueName.value.trim();
+    const note = queueNote.value.trim();
+    if (!name) {
+      queueMessage.textContent = "กรุณากรอกชื่อของคุณ";
+      return;
+    }
+    let queue = getQueue();
+    if (queue.length >= 50) {
+      queueMessage.textContent = "ขออภัย คิวเต็มแล้ว";
+      return;
+    }
+    if (queue.some(item => item.name.toLowerCase() === name.toLowerCase())) {
+      queueMessage.textContent = "ชื่อนี้อยู่ในคิวแล้ว";
+      return;
+    }
+    queue.push({ name, note });
+    setQueue(queue);
+    localStorage.setItem(myQueueNameKey, name);
+    myName = name;
+    updateQueueTabScreen();
+  });
+  leaveQueueBtn.addEventListener("click", function() {
+    let queue = getQueue();
+    queue = queue.filter(q => q.name !== myName);
+    setQueue(queue);
+    showFormScreen();
+    renderQueue();
+  });
+  window.addEventListener("storage", function(e){
+    if (e.key === queueKey || e.key === leaderboardKey) {
+      updateQueueTabScreen();
+      renderLeaderboardTable();
+    }
+  });
+  queueTab.addEventListener("click", updateQueueTabScreen);
+  // On page load, update once
+  updateQueueTabScreen();
+
+  // --- Admin logic ---
+  // Elements
+  const adminTab = document.querySelector('.tab[data-tab="admin"]');
+  const adminLoginForm = document.getElementById("adminLoginForm");
+  const adminLoginMsg = document.getElementById("adminLoginMsg");
+  const adminPanel = document.getElementById("adminPanel");
+  const adminMsgDiv = document.getElementById("adminMsg");
+  const addPlayerForm = document.getElementById("addPlayerForm");
+  const addPlayerName = document.getElementById("addPlayerName");
+  const addPlayerScore = document.getElementById("addPlayerScore");
+  const adminQueueListItems = document.getElementById("adminQueueListItems");
+  const adminLogoutBtn = document.getElementById("adminLogoutBtn");
+
+  let isAdmin = false;
+
+  function adminMsg(msg, type) {
+    adminMsgDiv.textContent = msg;
+    adminMsgDiv.style.color = type === "ok" ? "#ffb3b3" : "#ff4b4b";
+    setTimeout(() => adminMsgDiv.textContent = "", 2000);
+  }
+
+  function renderAdminQueueList() {
+    const queue = getQueue();
+    adminQueueListItems.innerHTML = "";
+    if (queue.length === 0) {
+      adminQueueListItems.innerHTML = "<li style='color:#d1a3a3;font-style:italic;'>- คิวยังว่าง -</li>";
+      return;
+    }
+    queue.forEach((item, idx) => {
+      adminQueueListItems.innerHTML += `<li>
+        <span><strong>${item.name}</strong>${item.note ? ` <span style="color:#d1a3a3;">(${item.note})</span>` : ""}</span>
+        <span class="admin-queue-btns">
+          <button data-index="${idx}" class="admin-remove-queue">ลบ</button>
+        </span>
+      </li>`;
+    });
+    // Hook up remove
+    adminQueueListItems.querySelectorAll(".admin-remove-queue").forEach(btn => {
+      btn.onclick = function() {
+        if (!confirm("ลบคิวนี้ใช่หรือไม่?")) return;
+        const idx = parseInt(btn.getAttribute("data-index"));
+        let queue = getQueue();
+        if(queue[idx].name === myName){
+          myName = "";
+          localStorage.removeItem(myQueueNameKey);
+        }
+        queue.splice(idx, 1);
+        setQueue(queue);
+        renderAdminQueueList();
+        adminMsg("ลบคิวสำเร็จ!","ok");
+        updateQueueTabScreen();
+      };
+    });
+  }
+
+  // Admin login
+  function showAdminPanel() {
+    isAdmin = true;
+    adminLoginForm.style.display = "none";
+    adminPanel.style.display = "flex";
+    renderAdminPlayersList();
+    renderAdminQueueList();
+  }
+  function showAdminLogin() {
+    isAdmin = false;
+    adminLoginForm.style.display = "flex";
+    adminPanel.style.display = "none";
+    adminLoginForm.reset();
+    adminLoginMsg.textContent = "";
+  }
+  adminLoginForm.addEventListener("submit", function(e){
+    e.preventDefault();
+    const pass = document.getElementById("adminPass").value;
+    if(pass === ADMIN_PASSWORD){
+      showAdminPanel();
+    }else{
+      adminLoginMsg.textContent = "รหัสผิด";
+      adminLoginMsg.style.color = "#ff4b4b";
+    }
+  });
+  adminLogoutBtn.addEventListener("click", function(){
+    showAdminLogin();
   });
 
-  // Search input event
-  const input = document.getElementById("searchInput");
-  const info = document.getElementById("rankInfo");
+  // Add player
+  addPlayerForm.addEventListener("submit", function(e){
+    e.preventDefault();
+    const name = addPlayerName.value.trim();
+    const score = parseInt(addPlayerScore.value.trim())||0;
+    if(!name){
+      adminMsg("กรอกชื่อ","err");
+      return;
+    }
+    let pls = getPlayers();
+    if(pls.some(p=>p.name.toLowerCase()===name.toLowerCase())){
+      adminMsg("มีชื่อนี้อยู่แล้ว","err");
+      return;
+    }
+    pls.push({name, score});
+    setPlayers(pls);
+    renderLeaderboardTable();
+    renderAdminPlayersList();
+    adminMsg("เพิ่มสำเร็จ!","ok");
+    addPlayerForm.reset();
+  });
 
-  input.addEventListener("input", () => {
-    const query = input.value.trim().toLowerCase();
+  // --- Tab switching with sound ---
+  const tabs = document.querySelectorAll(".tab");
+  const contents = document.querySelectorAll(".content");
+  const clickSound = new Audio("https://freesound.org/data/previews/256/256113_3263906-lq.mp3");
+  clickSound.volume = 0.15;
+  const typingSound = new Audio("https://freesound.org/data/previews/221/221663_4019027-lq.mp3");
+  typingSound.volume = 0.07;
+  tabs.forEach(tab => {
+    tab.addEventListener("click", () => {
+      clickSound.currentTime = 0;
+      clickSound.play();
+      tabs.forEach(t => t.classList.remove("active"));
+      contents.forEach(c => c.classList.remove("active"));
+      tab.classList.add("active");
+      const target = tab.dataset.tab;
+      document.getElementById(target).classList.add("active");
+      if (target === "queue") updateQueueTabScreen();
+      if (target === "leaderboard") renderLeaderboardTable();
+      if (target === "admin") {
+        if(isAdmin) showAdminPanel(); else showAdminLogin();
+      }
+    });
+  });
+  document.getElementById("searchInput").addEventListener("keydown", () => {
+    if (typingSound.paused) {
+      typingSound.currentTime = 0;
+      typingSound.play();
+    }
+  });
+  queueName.addEventListener("keydown", () => {
+    if (typingSound.paused) {
+      typingSound.currentTime = 0;
+      typingSound.play();
+    }
+  });
+  queueNote.addEventListener("keydown", () => {
+    if (typingSound.paused) {
+      typingSound.currentTime = 0;
+      typingSound.play();
+    }
+  });
+
+  // --- Leaderboard search ---
+  document.getElementById("searchInput").addEventListener("input", () => {
+    const query = document.getElementById("searchInput").value.trim().toLowerCase();
+    const sorted = getPlayers().slice().sort((a, b) => b.score - a.score);
+    const info = document.getElementById("rankInfo");
     const foundIndex = sorted.findIndex(p => p.name.toLowerCase() === query);
     if (foundIndex !== -1) {
       const player = sorted[foundIndex];
@@ -392,85 +1006,40 @@
     }
   });
 
-  // Tab switching with click sound
-  const tabs = document.querySelectorAll(".tab");
-  const contents = document.querySelectorAll(".content");
-
-  // Load click sound
-  const clickSound = new Audio("https://freesound.org/data/previews/256/256113_3263906-lq.mp3");
-  clickSound.volume = 0.15;
-
-  // Typing sound
-  const typingSound = new Audio("https://freesound.org/data/previews/221/221663_4019027-lq.mp3");
-  typingSound.volume = 0.07;
-
-  tabs.forEach(tab => {
-    tab.addEventListener("click", () => {
-      clickSound.currentTime = 0;
-      clickSound.play();
-
-      // Remove active class from all tabs & contents
-      tabs.forEach(t => t.classList.remove("active"));
-      contents.forEach(c => c.classList.remove("active"));
-
-      // Add active to clicked tab & corresponding content
-      tab.classList.add("active");
-      const target = tab.dataset.tab;
-      document.getElementById(target).classList.add("active");
-    });
-  });
-
-  // Play typing sound when typing
-  input.addEventListener("keydown", () => {
-    // play sound only if not playing
-    if (typingSound.paused) {
-      typingSound.currentTime = 0;
-      typingSound.play();
-    }
-  });
-
-  // Tilt effect - smooth and subtle
+  // --- Tilt effect ---
   const container = document.getElementById("tiltContainer");
-  let mouseX = 0;
-  let mouseY = 0;
-  let rotateX = 0;
-  let rotateY = 0;
-
+  let mouseX = 0, mouseY = 0, rotateX = 0, rotateY = 0;
   window.addEventListener("mousemove", e => {
     const rect = container.getBoundingClientRect();
     mouseX = e.clientX - (rect.left + rect.width / 2);
     mouseY = e.clientY - (rect.top + rect.height / 2);
   });
-
   function animate() {
     rotateX += (mouseY / 25 - rotateX) * 0.1;
     rotateY += (mouseX / 25 - rotateY) * 0.1;
     container.style.transform = `rotateX(${-rotateX}deg) rotateY(${rotateY}deg)`;
     requestAnimationFrame(animate);
   }
-
   animate();
 
-  // Generate background particles
+  // --- Animated background particles ---
   const bg = document.getElementById("backgroundEffect");
-
   function randomBetween(min, max) {
     return Math.random() * (max - min) + min;
   }
-
-  // Create 30 particles of different sizes and positions
   for (let i = 0; i < 30; i++) {
     const p = document.createElement("div");
     p.classList.add("particle");
     const sizeClass = i % 3 === 0 ? "small" : (i % 3 === 1 ? "medium" : "large");
     p.classList.add(sizeClass);
-
     p.style.top = `${randomBetween(0, 100)}%`;
     p.style.left = `${randomBetween(0, 100)}%`;
     p.style.animationDelay = `${randomBetween(0, 20)}s`;
-
     bg.appendChild(p);
   }
+
+  // -- On load
+  renderLeaderboardTable();
 </script>
 </body>
 </html>
