@@ -488,7 +488,7 @@
   <div class="wrapper">
     <nav class="menu">
       <div class="tab active" data-tab="leaderboard">Leaderboard</div>
-      <div class="tab" data-tab="queue">queue</div>
+      <div class="tab" data-tab="queue">จองคิว</div>
       <div class="tab" data-tab="contact">Contact</div>
       <div class="tab" data-tab="admin">Admin</div>
     </nav>
@@ -664,12 +664,16 @@
       return;
     }
     const ref = db.ref('queue').push();
-    ref.set({ name, note, time: Date.now() });
-    // save my key
-    localStorage.setItem("lingkinpugMyQueueName", name);
-    localStorage.setItem("lingkinpugMyQueueKey", ref.key);
-    myName = name;
-    myQueueKey = ref.key;
+    const now = Date.now();
+    ref.set({ name, note, time: now }).then(() => {
+      localStorage.setItem("lingkinpugMyQueueName", name);
+      localStorage.setItem("lingkinpugMyQueueKey", ref.key);
+      myName = name;
+      myQueueKey = ref.key;
+      // แสดงหน้ารอคิวทันที
+      const queueArr = [...allQueue, { key: ref.key, name, note, time: now }];
+      showWaitingScreen(queueArr);
+    });
   }
   function removeFromQueueByName(name) {
     const found = allQueue.find(q => q.name === name);
