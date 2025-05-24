@@ -464,14 +464,6 @@
       background: #ff9999;
       color: #111;
     }
-    .copy-name {
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-    .copy-name:hover {
-      background: #ff4b4b22;
-      border-radius: 8px;
-    }
     @keyframes fadeIn {
       from { opacity: 0; transform: scale(.98);}
       to   { opacity: 1; transform: scale(1);}
@@ -585,7 +577,7 @@
     </div>
   </div>
 <script>
-  // Firebase config
+  // Firebase config (เปลี่ยนค่าเป็นของคุณ)
   const firebaseConfig = {
     apiKey: "AIzaSyCSAH5EAPC9stXeFPpG9L_FDlj-gta0OjU",
     authDomain: "lingkinpug-queue.firebaseapp.com",
@@ -639,13 +631,12 @@
       const tr = document.createElement("tr");
       tr.innerHTML = `
         <td>#${index + 1}</td>
-        <td><strong class="copy-name" data-name="${player.name}">${player.name}</strong></td>
+        <td>${player.name}</td>
         <td>${player.score}</td>
         <td><span class="rank-tier ${rank}">${rank}</span></td>
       `;
       tbody.appendChild(tr);
     });
-    addCopyNameEvents();
   }
 
   // --- Firebase Queue Logic ---
@@ -722,9 +713,8 @@
       return;
     }
     queueArr.forEach((item, idx) => {
-      queueListItems.innerHTML += `<li><strong class="copy-name" data-name="${item.name}">${item.name}</strong>${item.note ? ` <span style="color:#d1a3a3;">(${item.note})</span>` : ""}</li>`;
+      queueListItems.innerHTML += `<li><strong>${item.name}</strong>${item.note ? ` <span style="color:#d1a3a3;">(${item.note})</span>` : ""}</li>`;
     });
-    addCopyNameEvents();
   }
 
   function showWaitingScreen(queueArr) {
@@ -811,13 +801,12 @@
     }
     queueArr.forEach((item, idx) => {
       adminQueueListItems.innerHTML += `<li>
-        <span><strong class="copy-name" data-name="${item.name}">${item.name}</strong>${item.note ? ` <span style="color:#d1a3a3;">(${item.note})</span>` : ""}</span>
+        <span><strong>${item.name}</strong>${item.note ? ` <span style="color:#d1a3a3;">(${item.note})</span>` : ""}</span>
         <span class="admin-queue-btns">
           <button data-key="${item.key}" class="admin-remove-queue">ลบ</button>
         </span>
       </li>`;
     });
-    addCopyNameEvents();
     adminQueueListItems.querySelectorAll(".admin-remove-queue").forEach(btn => {
       btn.onclick = function() {
         if (!confirm("ลบคิวนี้ใช่หรือไม่?")) return;
@@ -835,8 +824,7 @@
     sorted.forEach((player, index) => {
       html += `<tr>
         <td>#${index + 1}</td>
-        <td><strong class="copy-name" data-name="${player.name}">${player.name}</strong><br>
-        <input data-index="${index}" data-field="name" value="${player.name}" maxlength="24" style="width:85px;background:#550000;color:#ffc9c9;text-align:center;border-radius:12px;border:1px solid #772222;margin-top:5px;" /></td>
+        <td><input data-index="${index}" data-field="name" value="${player.name}" maxlength="24" style="width:85px;background:#550000;color:#ffc9c9;text-align:center;border-radius:12px;border:1px solid #772222;" /></td>
         <td><input data-index="${index}" data-field="score" type="number" value="${player.score}" min="0" style="width:65px;background:#550000;color:#ffc9c9;text-align:center;border-radius:12px;border:1px solid #772222;" /></td>
         <td><button data-index="${index}" class="admin-save-player">บันทึก</button></td>
         <td><button data-index="${index}" class="admin-remove-player">ลบ</button></td>
@@ -844,7 +832,6 @@
     });
     html += "</tbody></table>";
     listDiv.innerHTML = html;
-    addCopyNameEvents();
     listDiv.querySelectorAll(".admin-save-player").forEach(btn => {
       btn.onclick = function(){
         const idx = parseInt(btn.getAttribute("data-index"));
@@ -887,7 +874,7 @@
     adminLoginMsg.textContent = "";
   }
   adminLoginForm.addEventListener("submit", function(e){
-    e.preventDefault(); // <---- สำคัญ! กันรีเฟรช
+    e.preventDefault();
     const pass = document.getElementById("adminPass").value;
     if(pass === ADMIN_PASSWORD){
       showAdminPanel();
@@ -919,29 +906,6 @@
     adminMsg("เพิ่มสำเร็จ!","ok");
     addPlayerForm.reset();
   });
-
-  // --- Copy name handler ---
-  function addCopyNameEvents() {
-    document.querySelectorAll('.copy-name').forEach(el => {
-      el.style.cursor = "pointer";
-      el.title = "คลิกเพื่อคัดลอกชื่อ";
-      el.onclick = function(e) {
-        e.stopPropagation();
-        const name = el.getAttribute("data-name");
-        // ใช้ Clipboard API
-        navigator.clipboard.writeText(name).then(() => {
-          el.style.background = "#ffb3b388";
-          el.style.borderRadius = "8px";
-          el.style.transition = "background 0.4s";
-          el.innerText = name + " ✓";
-          setTimeout(() => {
-            el.innerText = name;
-            el.style.background = "";
-          }, 900);
-        });
-      };
-    });
-  }
 
   // --- Tab switching with sound ---
   const tabs = document.querySelectorAll(".tab");
@@ -991,8 +955,7 @@
     const foundIndex = sorted.findIndex(p => p.name.toLowerCase() === query);
     if (foundIndex !== -1) {
       const player = sorted[foundIndex];
-      info.innerHTML = `<strong class="copy-name" data-name="${player.name}">${player.name}</strong> อยู่อันดับ <strong>#${foundIndex + 1}</strong> แรงค์: <span class="rank-tier ${getRank(player.score)}">${getRank(player.score)}</span> (${player.score} คะแนน)`;
-      addCopyNameEvents();
+      info.innerHTML = `<strong>${player.name}</strong> อยู่อันดับ <strong>#${foundIndex + 1}</strong> แรงค์: <span class="rank-tier ${getRank(player.score)}">${getRank(player.score)}</span> (${player.score} คะแนน)`;
     } else {
       info.textContent = "ไม่พบชื่อนี้ในตาราง";
     }
