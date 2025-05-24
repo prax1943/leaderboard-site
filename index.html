@@ -496,7 +496,7 @@
   <div class="wrapper">
     <nav class="menu">
       <div class="tab active" data-tab="leaderboard">Leaderboard</div>
-      <div class="tab" data-tab="queue">queue</div>
+      <div class="tab" data-tab="queue">จองคิว</div>
       <div class="tab" data-tab="contact">Contact</div>
       <div class="tab" data-tab="admin">Admin</div>
     </nav>
@@ -585,7 +585,7 @@
     </div>
   </div>
 <script>
-  // Firebase config (เปลี่ยนค่าเป็นของคุณ)
+  // Firebase config
   const firebaseConfig = {
     apiKey: "AIzaSyCSAH5EAPC9stXeFPpG9L_FDlj-gta0OjU",
     authDomain: "lingkinpug-queue.firebaseapp.com",
@@ -872,6 +872,53 @@
       };
     });
   }
+  function showAdminPanel() {
+    isAdmin = true;
+    adminLoginForm.style.display = "none";
+    adminPanel.style.display = "flex";
+    renderAdminPlayersList();
+    renderAdminQueueList(allQueue);
+  }
+  function showAdminLogin() {
+    isAdmin = false;
+    adminLoginForm.style.display = "flex";
+    adminPanel.style.display = "none";
+    adminLoginForm.reset();
+    adminLoginMsg.textContent = "";
+  }
+  adminLoginForm.addEventListener("submit", function(e){
+    e.preventDefault(); // <---- สำคัญ! กันรีเฟรช
+    const pass = document.getElementById("adminPass").value;
+    if(pass === ADMIN_PASSWORD){
+      showAdminPanel();
+    }else{
+      adminLoginMsg.textContent = "รหัสผิด";
+      adminLoginMsg.style.color = "#ff4b4b";
+    }
+  });
+  adminLogoutBtn.addEventListener("click", function(){
+    showAdminLogin();
+  });
+  addPlayerForm.addEventListener("submit", function(e){
+    e.preventDefault();
+    const name = addPlayerName.value.trim();
+    const score = parseInt(addPlayerScore.value.trim())||0;
+    if(!name){
+      adminMsg("กรอกชื่อ","err");
+      return;
+    }
+    let pls = getPlayers();
+    if(pls.some(p=>p.name.toLowerCase()===name.toLowerCase())){
+      adminMsg("มีชื่อนี้อยู่แล้ว","err");
+      return;
+    }
+    pls.push({name, score});
+    setPlayers(pls);
+    renderLeaderboardTable();
+    renderAdminPlayersList();
+    adminMsg("เพิ่มสำเร็จ!","ok");
+    addPlayerForm.reset();
+  });
 
   // --- Copy name handler ---
   function addCopyNameEvents() {
