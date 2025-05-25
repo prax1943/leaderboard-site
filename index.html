@@ -507,13 +507,13 @@
   <div class="snail-drop-container" id="snailDropContainer"></div>
   <div class="wrapper">
     <nav class="menu">
-      <div class="tab active" data-tab="leaderboard">Leaderboard</div>
-      <div class="tab" data-tab="queue">queue</div>
+      <div class="tab" data-tab="leaderboard">Leaderboard</div>
+      <div class="tab active" data-tab="queue">queue</div>
       <div class="tab" data-tab="contact">Contact</div>
       <div class="tab" data-tab="admin">Admin</div>
     </nav>
     <div class="container" id="tiltContainer">
-      <div id="leaderboard" class="content active">
+      <div id="leaderboard" class="content">
         <h1>Lingkinpug Leaderboard</h1>
         <input type="text" id="searchInput" placeholder="พิมพ์ชื่อของคุณ เช่น แตมคนเท่" autocomplete="off" />
         <div class="rank-info" id="rankInfo">กรอกชื่อด้านบนเพื่อดูอันดับของคุณ</div>
@@ -531,7 +531,7 @@
           </table>
         </div>
       </div>
-      <div id="queue" class="content">
+      <div id="queue" class="content active">
         <h1>จองคิว</h1>
         <form class="queue-form" id="queueForm" autocomplete="off">
           <div class="queue-message" id="queueMessage"></div>
@@ -1002,6 +1002,7 @@
   clickSound.volume = 0.15;
   const typingSound = new Audio("https://freesound.org/data/previews/221/221663_4019027-lq.mp3");
   typingSound.volume = 0.07;
+
   tabs.forEach(tab => {
     tab.addEventListener("click", () => {
       clickSound.currentTime = 0;
