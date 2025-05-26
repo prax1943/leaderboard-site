@@ -5,489 +5,79 @@
   <title>PK4 🐌</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
-    body {
-      margin: 0;
-      padding: 3rem;
-      font-family: 'Montserrat', sans-serif;
-      background-color: #111;
-      color: #eee;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      min-height: 100vh;
-      user-select: none;
-      perspective: 1000px;
-      overflow-x: hidden;
-      position: relative;
-      overflow: hidden;
-    }
-    .background-effect {
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      pointer-events: none;
-      z-index: 0;
-      overflow: hidden;
-      background: radial-gradient(ellipse at center, #330000 0%, #110000 70%);
-    }
-    .snail-drop-container {
-      pointer-events: none;
-      position: fixed;
-      left: 0;
-      top: 0;
-      width: 100vw;
-      height: 100vh;
-      z-index: 1000;
-      overflow: hidden;
-    }
-    .wrapper {
-      max-width: 720px;
-      width: 90vw;
-      position: relative;
-      z-index: 1;
-    }
-    .menu {
-      display: flex;
-      justify-content: center;
-      margin-bottom: 2rem;
-      gap: 2rem;
-      user-select: none;
-    }
-    .tab {
-      padding: 12px 30px;
-      border-radius: 30px;
-      cursor: pointer;
-      font-weight: 700;
-      font-size: 1.1rem;
-      color: #ff4b4b;
-      background: #220000;
-      box-shadow: 0 0 8px #ff4b4b88;
-      transition: all 0.3s ease;
-      border: 2px solid transparent;
-      user-select: none;
-      user-drag: none;
-    }
-    .tab:hover, .tab.active {
-      background: #ff4b4b;
-      color: #111;
-      box-shadow: 0 0 20px #ff4b4bcc;
-      border-color: #ff4b4b;
-    }
-    .container {
-      background: linear-gradient(145deg, #2b0000, #480000);
-      padding: 2rem 3rem;
-      border-radius: 20px;
-      box-shadow: 0 0 20px #ff1e1e88, inset 0 0 40px #ff4b4baa;
-      transform-style: preserve-3d;
-      transition: box-shadow 0.3s ease;
-      user-select: none;
-      transform: rotateX(0deg) rotateY(0deg);
-    }
-    .content {
-      display: none;
-      color: #ffc9c9;
-    }
-    .content.active {
-      display: block;
-    }
-    h1 {
-      font-weight: 700;
-      font-size: 3rem;
-      letter-spacing: 3px;
-      color: #ff4b4b;
-      margin-bottom: 2rem;
-      text-shadow: 0 0 12px #ff4b4bcc;
-      user-select: none;
-      text-align: center;
-    }
-    input[type="text"], input[type="number"], input[type="password"] {
-      width: 100%;
-      padding: 14px 20px;
-      font-size: 1.2rem;
-      border: 2px solid #ff4b4b;
-      border-radius: 30px;
-      background: transparent;
-      color: #eee;
-      outline: none;
-      transition: all 0.3s ease;
-      margin-bottom: 2rem;
-      text-align: center;
-      user-select: text;
-    }
-    input[type="text"]::placeholder, input[type="number"]::placeholder, input[type="password"]::placeholder {
-      color: #d1a3a3;
-    }
-    input[type="text"]:focus, input[type="number"]:focus, input[type="password"]:focus {
-      background-color: #ff4b4b;
-      color: #111;
-      box-shadow: 0 0 20px #ff4b4bcc;
-      border-color: #ff4b4b;
-    }
-    .rank-info {
-      font-size: 1.3rem;
-      margin-bottom: 3rem;
-      font-weight: 600;
-      text-align: center;
-      min-height: 2.4rem;
-      color: #ffc9c9;
-      letter-spacing: 0.1em;
-      user-select: none;
-    }
-    .scrollable-table-wrapper {
-      max-height: 340px;
-      overflow-y: auto;
-      overflow-x: hidden;
-      margin-bottom: 1.5em;
-      background: none;
-      scrollbar-gutter: stable;
-    }
-    .scrollable-queue-wrapper {
-      max-height: 360px;
-      overflow-y: auto;
-      overflow-x: hidden;
-      background: none;
-      scrollbar-gutter: stable;
-    }
-    .scrollable-table-wrapper::-webkit-scrollbar,
-    .scrollable-queue-wrapper::-webkit-scrollbar {
-      width: 8px;
-      background: transparent;
-    }
-    .scrollable-table-wrapper::-webkit-scrollbar-thumb,
-    .scrollable-queue-wrapper::-webkit-scrollbar-thumb {
-      background: linear-gradient(145deg, #ff4b4b66, #ff4b4b22);
-      border-radius: 20px;
-    }
-    .scrollable-table-wrapper,
-    .scrollable-queue-wrapper {
-      scrollbar-width: thin;
-      scrollbar-color: #ff4b4b44 transparent;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 8px 20px rgba(255, 75, 75, 0.7);
-      background: #3c0000;
-    }
-    th, td {
-      padding: 18px 24px;
-      text-align: left;
-      border-bottom: 1px solid #772222;
-      font-weight: 500;
-      font-size: 1.1rem;
-      color: #ffc9c9;
-    }
-    th {
-      background-color: #550000;
-      color: #ffb3b3;
-      letter-spacing: 0.15em;
-      font-weight: 700;
-    }
-    tbody tr:hover {
-      background-color: #ff4b4bcc;
-      color: #111;
-      font-weight: 700;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-    .rank-tier {
-      display: inline-block;
-      padding: 6px 18px;
-      border-radius: 40px;
-      font-weight: 700;
-      font-size: 1rem;
-      background-color: #ff4b4b;
-      color: #fff;
-      letter-spacing: 0.15em;
-      box-shadow: 0 0 10px #ff4b4bcc;
-      user-select: none;
-    }
-    .S { background-color: #ff6666; box-shadow: 0 0 15px #ff6666cc; }
-    .A { background-color: #ff4b4b; }
-    .B { background-color: #cc3a3a; }
-    .C { background-color: #992828; }
-    .D { background-color: #661818; }
-    .contact-list {
-      font-size: 1.2rem;
-      line-height: 2;
-      max-width: 480px;
-      margin: 0 auto;
-      text-align: center;
-      color: #ffc9c9;
-    }
-    .contact-list a {
-      color: #ff4b4b;
-      text-decoration: none;
-      font-weight: 700;
-      transition: color 0.3s ease;
-    }
-    .contact-list a:hover {
-      color: #ff9999;
-      text-decoration: underline;
-    }
-    .queue-form {
-      max-width: 400px;
-      margin: 0 auto 2rem auto;
-      background: #2b000088;
-      padding: 1.5rem 2rem 2rem 2rem;
-      border-radius: 20px;
-      box-shadow: 0 0 20px #ff4b4b22, 0 0 0 #000;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 12px;
-    }
-    .queue-form label {
-      font-weight: 600;
-      color: #ffb3b3;
-      font-size: 1.1rem;
-      margin-bottom: 0.2rem;
-      align-self: flex-start;
-    }
-    .queue-form button {
-      margin-top: 1rem;
-      background: #ff4b4b;
-      color: #fff;
-      font-weight: 700;
-      padding: 12px 32px;
-      border: none;
-      border-radius: 30px;
-      font-size: 1.1rem;
-      box-shadow: 0 0 10px #ff4b4baa;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-    .queue-form button:hover {
-      background: #ff9999;
-      color: #111;
-    }
-    .queue-message {
-      margin-bottom: 1rem;
-      text-align: center;
-      color: #ffb3b3;
-      font-size: 1.1rem;
-      min-height: 1.4em;
-    }
-    .queue-list {
-      max-width: 400px;
-      margin: 0 auto;
-      background: #440000cc;
-      border-radius: 16px;
-      padding: 1.5rem;
-      box-shadow: 0 0 20px #ff4b4b22;
-      color: #ffc9c9;
-      font-size: 1.1rem;
-      overflow: hidden;
-    }
-    .queue-list-title {
-      font-weight: 700;
-      margin-bottom: 0.5em;
-      color: #ff4b4b;
-      text-align: center;
-      letter-spacing: 0.1em;
-    }
-    .queue-list ol {
-      padding-left: 1.3em;
-      margin: 0;
-    }
-    .queue-list li {
-      padding: 0.3em 0;
-      border-bottom: 1px solid #66181833;
-      word-break: break-word;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .queue-list .admin-queue-btns button {
-      margin-left: 0.6em;
-      background: #ff4b4b;
-      color: #fff;
-      border: none;
-      border-radius: 18px;
-      padding: 2px 10px;
-      font-size: 0.95em;
-      cursor: pointer;
-      transition: background 0.15s;
-    }
-    .queue-list .admin-queue-btns button:hover {
-      background: #ff9999;
-      color: #111;
-    }
-    .queue-waiting {
-      max-width: 400px;
-      margin: 0 auto;
-      background: #220000dd;
-      border-radius: 22px;
-      padding: 2.5rem 2rem 2rem 2rem;
-      box-shadow: 0 0 30px #ff4b4b44;
-      color: #ffc9c9;
-      font-size: 1.2rem;
-      text-align: center;
-      animation: fadeIn 0.7s;
-      display: none;
-    }
-    .queue-waiting h2 {
-      color: #ff4b4b;
-      margin-bottom: 1rem;
-      font-size: 2.1rem;
-      letter-spacing: 2px;
-      text-shadow: 0 0 8px #ff4b4bcc;
-    }
-    .queue-waiting .your-queue {
-      margin: 1.5rem 0 0.7rem 0;
-      font-weight: bold;
-      font-size: 1.2em;
-      color: #fff;
-    }
-    .queue-waiting .others {
-      color: #ffb3b3;
-      margin-top: 1.3em;
-      font-size: .95em;
-      opacity: .85;
-    }
-    .queue-waiting .leave-btn {
-      margin-top: 2em;
-      background: #772222;
-      color: #fff;
-      font-weight: 700;
-      padding: 10px 28px;
-      border: none;
-      border-radius: 30px;
-      font-size: 1em;
-      box-shadow: 0 0 7px #ff4b4baa;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-    .queue-waiting .leave-btn:hover {
-      background: #ff4b4b;
-      color: #111;
-    }
-    .admin-login-form,
-    .admin-panel {
-      max-width: 400px;
-      margin: 0 auto 2rem auto;
-      background: #2b000088;
-      padding: 2rem 2rem 2rem 2rem;
-      border-radius: 20px;
-      box-shadow: 0 0 20px #ff4b4b22, 0 0 0 #000;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 16px;
-    }
-    .admin-login-form label {
-      font-weight: 600;
-      color: #ffb3b3;
-      font-size: 1.1rem;
-      margin-bottom: 0.2rem;
-      align-self: flex-start;
-    }
-    .admin-login-form button,
-    .admin-panel button {
-      margin-top: 1rem;
-      background: #ff4b4b;
-      color: #fff;
-      font-weight: 700;
-      padding: 12px 32px;
-      border: none;
-      border-radius: 30px;
-      font-size: 1.1rem;
-      box-shadow: 0 0 10px #ff4b4baa;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-    .admin-login-form button:hover,
-    .admin-panel button:hover {
-      background: #ff9999;
-      color: #111;
-    }
-    .admin-message {
-      color: #ffb3b3;
-      min-height: 1.5em;
-      text-align: center;
-      font-size: 1.1em;
-    }
-    .admin-panel {
-      gap: 18px;
-    }
-    .admin-panel label {
-      align-self: flex-start;
-      color: #ffb3b3;
-      font-weight: 600;
-      margin-bottom: 0.2rem;
-    }
-    .admin-panel input[type="text"], .admin-panel input[type="number"] {
-      margin-bottom: 0.5rem;
-    }
-    .admin-panel .players-list {
-      width: 100%;
-      margin-top: 1.2em;
-      font-size: 1em;
-      max-height: 260px;
-      overflow-y: auto;
-      background: none;
-      scrollbar-gutter: stable;
-    }
-    .admin-panel .players-list::-webkit-scrollbar {
-      width: 8px;
-      background: transparent;
-    }
-    .admin-panel .players-list::-webkit-scrollbar-thumb {
-      background: linear-gradient(145deg, #ff4b4b66, #ff4b4b22);
-      border-radius: 20px;
-    }
-    .admin-panel .players-list {
-      scrollbar-width: thin;
-      scrollbar-color: #ff4b4b44 transparent;
-    }
-    .admin-panel .players-list table {
-      width: 100%;
-      background: #4f0000;
-      border-radius: 12px;
-      overflow: hidden;
-      margin-bottom: 1em;
-      box-shadow: 0 0 10px #ff4b4b44;
-    }
-    .admin-panel .players-list th, .admin-panel .players-list td {
-      padding: 10px 8px;
-      font-size: 0.98em;
-      color: #ffc9c9;
-      text-align: center;
-    }
-    .admin-panel .players-list th {
-      background: #660000;
-      color: #ffb3b3;
-    }
-    .admin-panel .players-list button {
-      background: #ff4b4b;
-      color: #fff;
-      border: none;
-      border-radius: 16px;
-      padding: 2px 10px;
-      font-size: 0.95em;
-      cursor: pointer;
-      margin: 0 2px;
-      transition: background 0.15s;
-    }
-    .admin-panel .players-list button:hover {
-      background: #ff9999;
-      color: #111;
-    }
-    .copyable-name {
-      cursor: pointer;
-      color: #ffb3b3;
-      text-decoration: none;
-      transition: background 0.2s, color 0.2s;
-    }
-    .copyable-name:hover {
-      background: #ff4b4b33;
-      color: #fff;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: scale(.98);}
-      to   { opacity: 1; transform: scale(1);}
-    }
+    body { margin: 0; padding: 3rem; font-family: 'Montserrat', sans-serif; background-color: #111; color: #eee; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; user-select: none; perspective: 1000px; overflow-x: hidden; position: relative; overflow: hidden;}
+    .background-effect { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; overflow: hidden; background: radial-gradient(ellipse at center, #330000 0%, #110000 70%);}
+    .snail-drop-container { pointer-events: none; position: fixed; left: 0; top: 0; width: 100vw; height: 100vh; z-index: 1000; overflow: hidden;}
+    .wrapper { max-width: 720px; width: 90vw; position: relative; z-index: 1;}
+    .menu { display: flex; justify-content: center; margin-bottom: 2rem; gap: 2rem; user-select: none;}
+    .tab { padding: 12px 30px; border-radius: 30px; cursor: pointer; font-weight: 700; font-size: 1.1rem; color: #ff4b4b; background: #220000; box-shadow: 0 0 8px #ff4b4b88; transition: all 0.3s ease; border: 2px solid transparent; user-select: none; user-drag: none;}
+    .tab:hover, .tab.active { background: #ff4b4b; color: #111; box-shadow: 0 0 20px #ff4b4bcc; border-color: #ff4b4b;}
+    .container { background: linear-gradient(145deg, #2b0000, #480000); padding: 2rem 3rem; border-radius: 20px; box-shadow: 0 0 20px #ff1e1e88, inset 0 0 40px #ff4b4baa; transform-style: preserve-3d; transition: box-shadow 0.3s ease; user-select: none; transform: rotateX(0deg) rotateY(0deg);}
+    .content { display: none; color: #ffc9c9;}
+    .content.active { display: block;}
+    h1 { font-weight: 700; font-size: 3rem; letter-spacing: 3px; color: #ff4b4b; margin-bottom: 2rem; text-shadow: 0 0 12px #ff4b4bcc; user-select: none; text-align: center;}
+    input[type="text"], input[type="number"], input[type="password"] { width: 100%; padding: 14px 20px; font-size: 1.2rem; border: 2px solid #ff4b4b; border-radius: 30px; background: transparent; color: #eee; outline: none; transition: all 0.3s ease; margin-bottom: 2rem; text-align: center; user-select: text;}
+    input[type="text"]::placeholder, input[type="number"]::placeholder, input[type="password"]::placeholder { color: #d1a3a3;}
+    input[type="text"]:focus, input[type="number"]:focus, input[type="password"]:focus { background-color: #ff4b4b; color: #111; box-shadow: 0 0 20px #ff4b4bcc; border-color: #ff4b4b;}
+    .rank-info { font-size: 1.3rem; margin-bottom: 3rem; font-weight: 600; text-align: center; min-height: 2.4rem; color: #ffc9c9; letter-spacing: 0.1em; user-select: none;}
+    .scrollable-table-wrapper { max-height: 340px; overflow-y: auto; overflow-x: hidden; margin-bottom: 1.5em; background: none; scrollbar-gutter: stable;}
+    .scrollable-queue-wrapper { max-height: 360px; overflow-y: auto; overflow-x: hidden; background: none; scrollbar-gutter: stable;}
+    .scrollable-table-wrapper::-webkit-scrollbar, .scrollable-queue-wrapper::-webkit-scrollbar { width: 8px; background: transparent;}
+    .scrollable-table-wrapper::-webkit-scrollbar-thumb, .scrollable-queue-wrapper::-webkit-scrollbar-thumb { background: linear-gradient(145deg, #ff4b4b66, #ff4b4b22); border-radius: 20px;}
+    .scrollable-table-wrapper, .scrollable-queue-wrapper { scrollbar-width: thin; scrollbar-color: #ff4b4b44 transparent;}
+    table { width: 100%; border-collapse: collapse; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 20px rgba(255, 75, 75, 0.7); background: #3c0000;}
+    th, td { padding: 18px 24px; text-align: left; border-bottom: 1px solid #772222; font-weight: 500; font-size: 1.1rem; color: #ffc9c9;}
+    th { background-color: #550000; color: #ffb3b3; letter-spacing: 0.15em; font-weight: 700;}
+    tbody tr:hover { background-color: #ff4b4bcc; color: #111; font-weight: 700; cursor: pointer; transition: background-color 0.3s ease;}
+    .rank-tier { display: inline-block; padding: 6px 18px; border-radius: 40px; font-weight: 700; font-size: 1rem; background-color: #ff4b4b; color: #fff; letter-spacing: 0.15em; box-shadow: 0 0 10px #ff4b4bcc; user-select: none;}
+    .S { background-color: #ff6666; box-shadow: 0 0 15px #ff6666cc;}
+    .A { background-color: #ff4b4b;}
+    .B { background-color: #cc3a3a;}
+    .C { background-color: #992828;}
+    .D { background-color: #661818;}
+    .contact-list { font-size: 1.2rem; line-height: 2; max-width: 480px; margin: 0 auto; text-align: center; color: #ffc9c9;}
+    .contact-list a { color: #ff4b4b; text-decoration: none; font-weight: 700; transition: color 0.3s ease;}
+    .contact-list a:hover { color: #ff9999; text-decoration: underline;}
+    .queue-form { max-width: 400px; margin: 0 auto 2rem auto; background: #2b000088; padding: 1.5rem 2rem 2rem 2rem; border-radius: 20px; box-shadow: 0 0 20px #ff4b4b22, 0 0 0 #000; display: flex; flex-direction: column; align-items: center; gap: 12px;}
+    .queue-form label { font-weight: 600; color: #ffb3b3; font-size: 1.1rem; margin-bottom: 0.2rem; align-self: flex-start;}
+    .queue-form button { margin-top: 1rem; background: #ff4b4b; color: #fff; font-weight: 700; padding: 12px 32px; border: none; border-radius: 30px; font-size: 1.1rem; box-shadow: 0 0 10px #ff4b4baa; cursor: pointer; transition: 0.2s;}
+    .queue-form button:hover { background: #ff9999; color: #111;}
+    .queue-message { margin-bottom: 1rem; text-align: center; color: #ffb3b3; font-size: 1.1rem; min-height: 1.4em;}
+    .queue-list { max-width: 400px; margin: 0 auto; background: #440000cc; border-radius: 16px; padding: 1.5rem; box-shadow: 0 0 20px #ff4b4b22; color: #ffc9c9; font-size: 1.1rem; overflow: hidden;}
+    .queue-list-title { font-weight: 700; margin-bottom: 0.5em; color: #ff4b4b; text-align: center; letter-spacing: 0.1em;}
+    .queue-list ol { padding-left: 1.3em; margin: 0;}
+    .queue-list li { padding: 0.3em 0; border-bottom: 1px solid #66181833; word-break: break-word; display: flex; align-items: center; justify-content: space-between;}
+    .queue-list .admin-queue-btns button { margin-left: 0.6em; background: #ff4b4b; color: #fff; border: none; border-radius: 18px; padding: 2px 10px; font-size: 0.95em; cursor: pointer; transition: background 0.15s;}
+    .queue-list .admin-queue-btns button:hover { background: #ff9999; color: #111;}
+    .queue-waiting { max-width: 400px; margin: 0 auto; background: #220000dd; border-radius: 22px; padding: 2.5rem 2rem 2rem 2rem; box-shadow: 0 0 30px #ff4b4b44; color: #ffc9c9; font-size: 1.2rem; text-align: center; animation: fadeIn 0.7s; display: none;}
+    .queue-waiting h2 { color: #ff4b4b; margin-bottom: 1rem; font-size: 2.1rem; letter-spacing: 2px; text-shadow: 0 0 8px #ff4b4bcc;}
+    .queue-waiting .your-queue { margin: 1.5rem 0 0.7rem 0; font-weight: bold; font-size: 1.2em; color: #fff;}
+    .queue-waiting .others { color: #ffb3b3; margin-top: 1.3em; font-size: .95em; opacity: .85;}
+    .queue-waiting .leave-btn { margin-top: 2em; background: #772222; color: #fff; font-weight: 700; padding: 10px 28px; border: none; border-radius: 30px; font-size: 1em; box-shadow: 0 0 7px #ff4b4baa; cursor: pointer; transition: 0.2s;}
+    .queue-waiting .leave-btn:hover { background: #ff4b4b; color: #111;}
+    .admin-login-form, .admin-panel { max-width: 400px; margin: 0 auto 2rem auto; background: #2b000088; padding: 2rem 2rem 2rem 2rem; border-radius: 20px; box-shadow: 0 0 20px #ff4b4b22, 0 0 0 #000; display: flex; flex-direction: column; align-items: center; gap: 16px;}
+    .admin-login-form label { font-weight: 600; color: #ffb3b3; font-size: 1.1rem; margin-bottom: 0.2rem; align-self: flex-start;}
+    .admin-login-form button, .admin-panel button { margin-top: 1rem; background: #ff4b4b; color: #fff; font-weight: 700; padding: 12px 32px; border: none; border-radius: 30px; font-size: 1.1rem; box-shadow: 0 0 10px #ff4b4baa; cursor: pointer; transition: 0.2s;}
+    .admin-login-form button:hover, .admin-panel button:hover { background: #ff9999; color: #111;}
+    .admin-message { color: #ffb3b3; min-height: 1.5em; text-align: center; font-size: 1.1em;}
+    .admin-panel { gap: 18px;}
+    .admin-panel label { align-self: flex-start; color: #ffb3b3; font-weight: 600; margin-bottom: 0.2rem;}
+    .admin-panel input[type="text"], .admin-panel input[type="number"] { margin-bottom: 0.5rem;}
+    .admin-panel .players-list { width: 100%; margin-top: 1.2em; font-size: 1em; max-height: 260px; overflow-y: auto; background: none; scrollbar-gutter: stable;}
+    .admin-panel .players-list::-webkit-scrollbar { width: 8px; background: transparent;}
+    .admin-panel .players-list::-webkit-scrollbar-thumb { background: linear-gradient(145deg, #ff4b4b66, #ff4b4b22); border-radius: 20px;}
+    .admin-panel .players-list { scrollbar-width: thin; scrollbar-color: #ff4b4b44 transparent;}
+    .admin-panel .players-list table { width: 100%; background: #4f0000; border-radius: 12px; overflow: hidden; margin-bottom: 1em; box-shadow: 0 0 10px #ff4b4b44;}
+    .admin-panel .players-list th, .admin-panel .players-list td { padding: 10px 8px; font-size: 0.98em; color: #ffc9c9; text-align: center;}
+    .admin-panel .players-list th { background: #660000; color: #ffb3b3;}
+    .admin-panel .players-list button { background: #ff4b4b; color: #fff; border: none; border-radius: 16px; padding: 2px 10px; font-size: 0.95em; cursor: pointer; margin: 0 2px; transition: background 0.15s;}
+    .admin-panel .players-list button:hover { background: #ff9999; color: #111;}
+    .copyable-name { cursor: pointer; color: #ffb3b3; text-decoration: none; transition: background 0.2s, color 0.2s;}
+    .copyable-name:hover { background: #ff4b4b33; color: #fff;}
+    .admin-toggle-queue { margin: 1em auto 0.5em auto; color: #ffb3b3; font-weight: bold; font-size: 1.1em; text-align: center; display: flex; align-items: center; gap: 0.5em; justify-content: center;}
+    .admin-toggle-queue input[type="checkbox"] { transform: scale(1.3); accent-color: #ff4b4b; margin-right: 0.5em;}
+    .queue-closed-message { color: #ff4b4b; font-weight: 700; text-align: center; margin-bottom: 2em; font-size: 1.2em; background: #220000cc; border-radius: 15px; padding: 1.2em 0.6em; box-shadow: 0 0 12px #ff4b4baa; display: none;}
+    @keyframes fadeIn { from { opacity: 0; transform: scale(.98);} to   { opacity: 1; transform: scale(1);}}
     @media (max-width: 600px) {
       h1 { font-size: 2.2rem; }
       th, td { font-size: 0.9rem; padding: 14px 16px; }
@@ -533,6 +123,7 @@
       </div>
       <div id="queue" class="content active">
         <h1>จองคิว</h1>
+        <div class="queue-closed-message" id="queueClosedMsg">ขออภัย ขณะนี้ยังไม่เปิดให้จองคิว</div>
         <form class="queue-form" id="queueForm" autocomplete="off">
           <div class="queue-message" id="queueMessage"></div>
           <label for="queueName">ชื่อของคุณ</label>
@@ -573,6 +164,11 @@
         </form>
         <div class="admin-panel" id="adminPanel" style="display: none;">
           <div class="admin-message" id="adminMsg"></div>
+          <div class="admin-toggle-queue">
+            <input type="checkbox" id="toggleQueueOpen" />
+            <label for="toggleQueueOpen" style="margin-bottom:0;">เปิด/ปิดให้จองคิว</label>
+            <span id="toggleQueueStatus"></span>
+          </div>
           <div>
             <label style="font-size:1.15em;">จัดการ Leaderboard</label>
             <form id="addPlayerForm" style="display:flex; gap:8px;">
@@ -611,6 +207,41 @@
   firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
 
+  // --- Open/Close Queue Toggle ---
+  let queueOpen = true;
+  const queueClosedMsg = document.getElementById("queueClosedMsg");
+  const queueForm = document.getElementById("queueForm");
+  const queueTab = document.querySelector('.tab[data-tab="queue"]');
+  const toggleQueueOpen = document.getElementById("toggleQueueOpen");
+  const toggleQueueStatus = document.getElementById("toggleQueueStatus");
+  function setQueueFormState(open) {
+    queueOpen = open;
+    if (open) {
+      queueClosedMsg.style.display = "none";
+      if (!myName || !allQueue.some(q => q.name === myName)) {
+        queueForm.style.display = "flex";
+      }
+    } else {
+      queueClosedMsg.style.display = "block";
+      queueForm.style.display = "none";
+    }
+    if (toggleQueueOpen) {
+      toggleQueueOpen.checked = !!open;
+      toggleQueueStatus.textContent = open ? "(เปิดให้จองคิว)" : "(ปิดการจองคิว)";
+      toggleQueueStatus.style.color = open ? "#47ff4b" : "#ff4b4b";
+    }
+  }
+  const settingsRef = db.ref('settings/queueOpen');
+  settingsRef.on('value', snap => {
+    const open = snap.exists() ? snap.val() : true;
+    setQueueFormState(open);
+  });
+  if (toggleQueueOpen) {
+    toggleQueueOpen.addEventListener('change', function() {
+      settingsRef.set(!!toggleQueueOpen.checked);
+    });
+  }
+
   // Snail Drop Effect
   function dropSnails(durationMs = 3000, interval = 180) {
     const emoji = "🐌";
@@ -623,17 +254,10 @@
     container.style.height = "100vh";
     container.style.zIndex = "1000";
     container.style.overflow = "hidden";
-
     let running = true;
-    function randomLeft() {
-      return Math.random() * 90 + 2; // % left (2-92%)
-    }
-    function randomSize() {
-      return Math.random() * 32 + 28; // px 28-60px
-    }
-    function randomDuration() {
-      return Math.random() * 1.4 + 1.6; // 1.6-3s
-    }
+    function randomLeft() { return Math.random() * 90 + 2; }
+    function randomSize() { return Math.random() * 32 + 28; }
+    function randomDuration() { return Math.random() * 1.4 + 1.6; }
     function createSnail() {
       if (!running) return;
       const snail = document.createElement("div");
@@ -651,17 +275,14 @@
       snail.style.transition = `transform ${fallDur}s linear, opacity 0.3s`;
       snail.style.transform = `translateY(0) rotate(${Math.random()*40-20}deg)`;
       container.appendChild(snail);
-
       setTimeout(() => {
         snail.style.transform = `translateY(${window.innerHeight + 80}px) rotate(${Math.random()*40-20}deg)`;
         snail.style.opacity = "0.75";
       }, 30);
-
       setTimeout(() => {
         snail.remove();
       }, fallDur * 1000 + 1000);
     }
-
     const intervalId = setInterval(createSnail, interval);
     setTimeout(() => {
       running = false;
@@ -733,7 +354,6 @@
   let allQueue = [];
   let myName = localStorage.getItem("lingkinpugMyQueueName") || "";
   let myQueueKey = localStorage.getItem("lingkinpugMyQueueKey") || "";
-
   db.ref('queue').on('value', snapshot => {
     const arr = [];
     snapshot.forEach(child => {
@@ -747,6 +367,10 @@
   });
 
   function addToQueue(name, note) {
+    if (!queueOpen) {
+      queueMessage.textContent = "ขณะนี้ยังไม่เปิดให้จองคิว";
+      return;
+    }
     if (allQueue.some(q => q.name.toLowerCase() === name.toLowerCase())) {
       queueMessage.textContent = "ชื่อนี้อยู่ในคิวแล้ว";
       return;
@@ -781,16 +405,13 @@
       localStorage.removeItem("lingkinpugMyQueueKey");
     }
   }
-
   // Queue UI
-  const queueForm = document.getElementById("queueForm");
   const queueName = document.getElementById("queueName");
   const queueNote = document.getElementById("queueNote");
   const queueMessage = document.getElementById("queueMessage");
   const queueListItems = document.getElementById("queueListItems");
   const queueWaiting = document.getElementById("queueWaiting");
   const leaveQueueBtn = document.getElementById("leaveQueueBtn");
-  const queueTab = document.querySelector('.tab[data-tab="queue"]');
   const queueList = document.getElementById("queueList");
 
   function renderQueue(queueArr) {
@@ -836,6 +457,13 @@
     localStorage.removeItem("lingkinpugMyQueueKey");
   }
   function updateQueueTabScreen() {
+    if (!queueOpen) {
+      setQueueFormState(false);
+      if (myName && allQueue.some(q => q.name === myName)) {
+        showWaitingScreen(allQueue);
+      }
+      return;
+    }
     if (myName && allQueue.some(q => q.name === myName)) {
       showWaitingScreen(allQueue);
     } else {
@@ -875,7 +503,6 @@
   const addPlayerScore = document.getElementById("addPlayerScore");
   const adminQueueListItems = document.getElementById("adminQueueListItems");
   const adminLogoutBtn = document.getElementById("adminLogoutBtn");
-
   let isAdmin = false;
   function adminMsg(msg, type) {
     adminMsgDiv.textContent = msg;
@@ -957,6 +584,11 @@
     adminPanel.style.display = "flex";
     renderAdminPlayersList();
     renderAdminQueueList(allQueue);
+    settingsRef.once('value').then(snap=>{
+      toggleQueueOpen.checked = snap.exists() ? !!snap.val() : true;
+      toggleQueueStatus.textContent = toggleQueueOpen.checked ? "(เปิดให้จองคิว)" : "(ปิดการจองคิว)";
+      toggleQueueStatus.style.color = toggleQueueOpen.checked ? "#47ff4b" : "#ff4b4b";
+    });
   }
   function showAdminLogin() {
     isAdmin = false;
@@ -1002,7 +634,6 @@
   clickSound.volume = 0.15;
   const typingSound = new Audio("https://freesound.org/data/previews/221/221663_4019027-lq.mp3");
   typingSound.volume = 0.07;
-
   tabs.forEach(tab => {
     tab.addEventListener("click", () => {
       clickSound.currentTime = 0;
