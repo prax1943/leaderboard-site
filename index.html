@@ -292,6 +292,10 @@
   }
   window.addEventListener("DOMContentLoaded", function(){
     dropSnails(3000, 150);
+    // --- Auto-login admin if remembered ---
+    if (checkAdminRemembered()) {
+      showAdminPanel();
+    }
   });
 
   function makeCopyableNames(container) {
@@ -493,6 +497,7 @@
 
   // Admin
   const ADMIN_PASSWORD = "pugking2024";
+  const ADMIN_STORAGE_KEY = "lingkinpugAdminLogin";
   const adminTab = document.querySelector('.tab[data-tab="admin"]');
   const adminLoginForm = document.getElementById("adminLoginForm");
   const adminLoginMsg = document.getElementById("adminLoginMsg");
@@ -504,6 +509,18 @@
   const adminQueueListItems = document.getElementById("adminQueueListItems");
   const adminLogoutBtn = document.getElementById("adminLogoutBtn");
   let isAdmin = false;
+
+  // Check admin login on load
+  function checkAdminRemembered() {
+    return localStorage.getItem(ADMIN_STORAGE_KEY) === "1";
+  }
+  function rememberAdminLogin() {
+    localStorage.setItem(ADMIN_STORAGE_KEY, "1");
+  }
+  function forgetAdminLogin() {
+    localStorage.removeItem(ADMIN_STORAGE_KEY);
+  }
+
   function adminMsg(msg, type) {
     adminMsgDiv.textContent = msg;
     adminMsgDiv.style.color = type === "ok" ? "#ffb3b3" : "#ff4b4b";
@@ -601,6 +618,7 @@
     e.preventDefault();
     const pass = document.getElementById("adminPass").value;
     if(pass === ADMIN_PASSWORD){
+      rememberAdminLogin();
       showAdminPanel();
     }else{
       adminLoginMsg.textContent = "รหัสผิด";
@@ -608,23 +626,8 @@
     }
   });
   adminLogoutBtn.addEventListener("click", function(){
+    forgetAdminLogin();
     showAdminLogin();
-  });
-  addPlayerForm.addEventListener("submit", function(e){
-    e.preventDefault();
-    const name = addPlayerName.value.trim();
-    const score = parseInt(addPlayerScore.value.trim())||0;
-    if(!name){
-      adminMsg("กรอกชื่อ","err");
-      return;
-    }
-    if(players.some(p=>p.name.toLowerCase()===name.toLowerCase())){
-      adminMsg("มีชื่อนี้อยู่แล้ว","err");
-      return;
-    }
-    addPlayer(name, score);
-    adminMsg("เพิ่มสำเร็จ!","ok");
-    addPlayerForm.reset();
   });
 
   // Tabs and search
@@ -646,7 +649,7 @@
       if (target === "queue") updateQueueTabScreen();
       if (target === "leaderboard") renderLeaderboardTable();
       if (target === "admin") {
-        if(isAdmin) showAdminPanel(); else showAdminLogin();
+        if(isAdmin || checkAdminRemembered()) showAdminPanel(); else showAdminLogin();
       }
     });
   });
