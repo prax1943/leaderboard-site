@@ -367,6 +367,104 @@
     });
   }
 
+  // --- Popup Confirm Utility ---
+  function showPopupConfirm({title, message, confirmText, cancelText, onConfirm, onCancel}) {
+    let container = document.getElementById('popupContainer');
+    container.innerHTML = '';
+    const overlay = document.createElement('div');
+    overlay.className = "popup-overlay";
+    overlay.tabIndex = -1;
+    const box = document.createElement('div');
+    box.className = "popup-box";
+    if (title) {
+      const h2 = document.createElement('h2');
+      h2.textContent = title;
+      box.appendChild(h2);
+    }
+    const msgDiv = document.createElement('div');
+    msgDiv.className = "popup-msg";
+    msgDiv.innerHTML = message;
+    box.appendChild(msgDiv);
+    const btns = document.createElement('div');
+    btns.className = "popup-btns";
+    const btnYes = document.createElement('button');
+    btnYes.textContent = confirmText || "ยืนยัน";
+    btnYes.onclick = () => {
+      overlay.remove();
+      if (onConfirm) onConfirm();
+    };
+    const btnNo = document.createElement('button');
+    btnNo.textContent = cancelText || "ยกเลิก";
+    btnNo.onclick = () => {
+      overlay.remove();
+      if (onCancel) onCancel();
+    };
+    btns.appendChild(btnYes);
+    btns.appendChild(btnNo);
+    box.appendChild(btns);
+    overlay.appendChild(box);
+    container.appendChild(overlay);
+    overlay.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') { btnNo.click(); }
+    });
+    overlay.focus();
+    overlay.addEventListener('click', function(e){
+      if (e.target === overlay) btnNo.click();
+    });
+  }
+
+  function showPopupInfo({title, message, okText, onOk}) {
+    let container = document.getElementById('popupContainer');
+    container.innerHTML = '';
+    const overlay = document.createElement('div');
+    overlay.className = "popup-overlay";
+    overlay.tabIndex = -1;
+    const box = document.createElement('div');
+    box.className = "popup-box";
+    if (title) {
+      const h2 = document.createElement('h2');
+      h2.textContent = title;
+      box.appendChild(h2);
+    }
+    const msgDiv = document.createElement('div');
+    msgDiv.className = "popup-msg";
+    msgDiv.innerHTML = message;
+    box.appendChild(msgDiv);
+    const btns = document.createElement('div');
+    btns.className = "popup-btns";
+    const btnOk = document.createElement('button');
+    btnOk.textContent = okText || "ตกลง";
+    btnOk.onclick = () => {
+      overlay.remove();
+      if (onOk) onOk();
+    };
+    btns.appendChild(btnOk);
+    box.appendChild(btns);
+    overlay.appendChild(box);
+    container.appendChild(overlay);
+    overlay.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') { btnOk.click(); }
+    });
+    overlay.focus();
+    overlay.addEventListener('click', function(e){
+      if (e.target === overlay) btnOk.click();
+    });
+  }
+
+  // Utility to format remaining milliseconds as HH:MM:SS
+  function formatTimeLeft(ms) {
+    if (ms < 0) ms = 0;
+    const s = Math.floor(ms/1000);
+    const h = Math.floor(s/3600);
+    const m = Math.floor((s%3600)/60);
+    const sec = s%60;
+    let parts = [];
+    if (h > 0) parts.push(h + " ชม.");
+    if (m > 0 || h > 0) parts.push(m + " นาที");
+    parts.push(sec + " วินาที");
+    return parts.join(" ");
+  }
+
   // Leaderboard Realtime
   let players = [];
   db.ref('leaderboard').on('value', snapshot => {
@@ -443,20 +541,35 @@
       queueMessage.textContent = "ขณะนี้ยังไม่เปิดให้จองคิว";
       return;
     }
-    // เช็คในประวัติ queue_history ว่าชื่อนี้เพิ่งจองใน 24 ชม. หรือไม่
     const nameLower = name.trim().toLowerCase();
+    // Check in queue_history
     const existed = queueHistoryLast24h.find(q => q.name.trim().toLowerCase() === nameLower);
     if (existed) {
+      // Show popup with time left
+      const timeLeft = existed.time + 86400000 - Date.now();
+      showPopupInfo({
+        title: "ไม่สามารถจองคิวซ้ำได้",
+        message: `ชื่อนี้จองคิวไปแล้วใน 24 ชั่วโมงที่ผ่านมา<br><br>โปรดรออีก <span style="color:#ff4b4b;font-weight:bold;">${formatTimeLeft(timeLeft)}</span> ก่อนจะลงชื่อเดิมซ้ำได้อีกครั้ง`,
+        okText: "ตกลง"
+      });
       queueMessage.textContent = "ชื่อนี้จองคิวไปแล้วใน 24 ชั่วโมงที่ผ่านมา";
       return;
     }
-    // เช็คในคิวปัจจุบันซ้ำ (กันกรณีข้อมูลใน cache ยังไม่อัปเดต)
+    // Check in current queue (in case cache not up-to-date)
     const found = allQueue.find(q => q.name.trim().toLowerCase() === nameLower);
     if (found && isWithinOneDay(found.time)) {
+      // Find latest time (whichever is later)
+      const latestTime = Math.max(found.time, existed ? existed.time : 0);
+      const timeLeft = latestTime + 86400000 - Date.now();
+      showPopupInfo({
+        title: "ไม่สามารถจองคิวซ้ำได้",
+        message: `ชื่อนี้จองคิวไปแล้วใน 24 ชั่วโมงที่ผ่านมา<br><br>โปรดรออีก <span style="color:#ff4b4b;font-weight:bold;">${formatTimeLeft(timeLeft)}</span> ก่อนจะลงชื่อเดิมซ้ำได้อีกครั้ง`,
+        okText: "ตกลง"
+      });
       queueMessage.textContent = "ชื่อนี้จองคิวไปแล้วใน 24 ชั่วโมงที่ผ่านมา";
       return;
     }
-    // บันทึกทั้ง queue และ queue_history
+    // Normal: Add to queue and history
     const ref = db.ref('queue').push();
     const now = Date.now();
     ref.set({ name, note, time: now }).then(() => {
@@ -567,60 +680,6 @@
     }
     addToQueue(name, note);
   });
-
-  // --- Popup Confirm Utility ---
-  function showPopupConfirm({title, message, confirmText, cancelText, onConfirm, onCancel}) {
-    // Remove any existing popup
-    let container = document.getElementById('popupContainer');
-    container.innerHTML = '';
-    // Create overlay
-    const overlay = document.createElement('div');
-    overlay.className = "popup-overlay";
-    overlay.tabIndex = -1;
-    // Create popup box
-    const box = document.createElement('div');
-    box.className = "popup-box";
-    if (title) {
-      const h2 = document.createElement('h2');
-      h2.textContent = title;
-      box.appendChild(h2);
-    }
-    const msgDiv = document.createElement('div');
-    msgDiv.className = "popup-msg";
-    msgDiv.innerHTML = message;
-    box.appendChild(msgDiv);
-    // Buttons
-    const btns = document.createElement('div');
-    btns.className = "popup-btns";
-    // ยืนยัน
-    const btnYes = document.createElement('button');
-    btnYes.textContent = confirmText || "ยืนยัน";
-    btnYes.onclick = () => {
-      overlay.remove();
-      if (onConfirm) onConfirm();
-    };
-    // ยกเลิก
-    const btnNo = document.createElement('button');
-    btnNo.textContent = cancelText || "ยกเลิก";
-    btnNo.onclick = () => {
-      overlay.remove();
-      if (onCancel) onCancel();
-    };
-    btns.appendChild(btnYes);
-    btns.appendChild(btnNo);
-    box.appendChild(btns);
-    overlay.appendChild(box);
-    container.appendChild(overlay);
-
-    // Escape key or click-outside cancels
-    overlay.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') { btnNo.click(); }
-    });
-    overlay.focus();
-    overlay.addEventListener('click', function(e){
-      if (e.target === overlay) btnNo.click();
-    });
-  }
 
   leaveQueueBtn.addEventListener("click", function() {
     showPopupConfirm({
