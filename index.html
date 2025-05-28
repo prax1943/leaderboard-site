@@ -292,7 +292,6 @@
   }
   window.addEventListener("DOMContentLoaded", function(){
     dropSnails(3000, 150);
-    // --- Auto-login admin if remembered ---
     if (checkAdminRemembered()) {
       showAdminPanel();
     }
@@ -370,7 +369,21 @@
     updateQueueTabScreen();
   });
 
-  // Helper: block same name within 1 day
+  // -------------------- ระบบกันลงชื่อซ้ำ 1 วัน ด้วย queue_history --------------------
+  let queueHistoryLast24h = [];
+  function updateQueueHistoryCache() {
+    // ดึงเฉพาะใน 24 ชม. ล่าสุด
+    const since = Date.now() - 86400000;
+    db.ref('queue_history').orderByChild('time').startAt(since).on('value', snapshot => {
+      const arr = [];
+      snapshot.forEach(child => {
+        arr.push(child.val());
+      });
+      queueHistoryLast24h = arr;
+    });
+  }
+  updateQueueHistoryCache();
+
   function isWithinOneDay(oldTime) {
     return (Date.now() - oldTime) < 86400000;
   }
@@ -380,15 +393,24 @@
       queueMessage.textContent = "ขณะนี้ยังไม่เปิดให้จองคิว";
       return;
     }
-    // เช็คว่ามีชื่อเดียวกันใน queue ที่ไม่เกิน 1 วัน
-    const found = allQueue.find(q => q.name.toLowerCase() === name.toLowerCase());
+    // เช็คในประวัติ queue_history ว่าชื่อนี้เพิ่งจองใน 24 ชม. หรือไม่
+    const nameLower = name.trim().toLowerCase();
+    const existed = queueHistoryLast24h.find(q => q.name.trim().toLowerCase() === nameLower);
+    if (existed) {
+      queueMessage.textContent = "ชื่อนี้จองคิวไปแล้วใน 24 ชั่วโมงที่ผ่านมา";
+      return;
+    }
+    // เช็คในคิวปัจจุบันซ้ำ (กันกรณีข้อมูลใน cache ยังไม่อัปเดต)
+    const found = allQueue.find(q => q.name.trim().toLowerCase() === nameLower);
     if (found && isWithinOneDay(found.time)) {
       queueMessage.textContent = "ชื่อนี้จองคิวไปแล้วใน 24 ชั่วโมงที่ผ่านมา";
       return;
     }
+    // บันทึกทั้ง queue และ queue_history
     const ref = db.ref('queue').push();
     const now = Date.now();
     ref.set({ name, note, time: now }).then(() => {
+      db.ref('queue_history').push({ name, note, time: now });
       localStorage.setItem("lingkinpugMyQueueName", name);
       localStorage.setItem("lingkinpugMyQueueKey", ref.key);
       myName = name;
@@ -656,7 +678,7 @@
       if (target === "queue") updateQueueTabScreen();
       if (target === "leaderboard") renderLeaderboardTable();
       if (target === "admin") {
-        if (isAdmin || checkAdminRemembered()) showAdminPanel(); else showAdminLogin();
+        if(isAdmin || checkAdminRemembered()) showAdminPanel(); else showAdminLogin();
       }
     });
   });
