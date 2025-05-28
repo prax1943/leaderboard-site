@@ -5,8 +5,27 @@
   <title>PK4 🐌</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
-    body { margin: 0; padding: 3rem; font-family: 'Montserrat', sans-serif; background-color: #111; color: #eee; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; user-select: none; perspective: 1000px; overflow-x: hidden; position: relative; overflow: hidden;}
-    .background-effect { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; overflow: hidden; background: radial-gradient(ellipse at center, #330000 0%, #110000 70%);}
+    html, body {
+      min-height: 100%;
+      height: 100%;
+      width: 100%;
+    }
+    body {
+      margin: 0;
+      padding: 3rem;
+      font-family: 'Montserrat', sans-serif;
+      background: radial-gradient(ellipse at center, #330000 0%, #110000 70%);
+      color: #eee;
+      min-height: 100vh;
+      user-select: none;
+      perspective: 1000px;
+      overflow-x: hidden;
+      overflow-y: auto;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
     .snail-drop-container { pointer-events: none; position: fixed; left: 0; top: 0; width: 100vw; height: 100vh; z-index: 1000; overflow: hidden;}
     .wrapper { max-width: 720px; width: 90vw; position: relative; z-index: 1;}
     .menu { display: flex; justify-content: center; margin-bottom: 2rem; gap: 2rem; user-select: none;}
@@ -270,7 +289,6 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 </head>
 <body>
-  <div class="background-effect" id="backgroundEffect"></div>
   <div class="snail-drop-container" id="snailDropContainer"></div>
   <div id="popupContainer"></div>
   <div class="wrapper">
@@ -1216,5 +1234,7 @@
   makeCopyableNames(document.getElementById('contactList'));
   renderLeaderboardTable();
 </script>
+<!-- เพิ่ม div ว่างด้านล่างสำหรับ scroll เพิ่มเติม (ถ้าต้องการให้ยาวขึ้นกว่านี้อีก) -->
+<div style="height: 120px;"></div>
 </body>
 </html>
