@@ -88,6 +88,8 @@
       .scrollable-table-wrapper, .scrollable-queue-wrapper { max-height: 200px; }
       .admin-panel .players-list { max-height: 160px; }
     }
+    #popupModal { animation: fadeIn 0.4s; }
+    #popupBox { animation: fadeIn 0.5s; }
   </style>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
@@ -190,6 +192,13 @@
           <button id="adminLogoutBtn" type="button">ออกจากระบบ</button>
         </div>
       </div>
+    </div>
+  </div>
+  <!-- Popup Modal -->
+  <div id="popupModal" style="display:none; position:fixed; z-index:20000; left:0; top:0; width:100vw; height:100vh; background:rgba(0,0,0,0.55); display:flex; align-items:center; justify-content:center;">
+    <div id="popupBox" style="background:#2b0000; border-radius:20px; box-shadow:0 0 30px #ff4b4b66; padding:2.5em 2em 2em 2em; color:#ffc9c9; font-size:1.15em; max-width:350px; text-align:center; position:relative;">
+      <button id="popupCloseBtn" style="position:absolute;top:8px;right:18px;background:none;border:none;font-size:1.8em;color:#ff4b4b;cursor:pointer;font-weight:700;line-height:1;">&times;</button>
+      <div id="popupMsg"></div>
     </div>
   </div>
 <script>
@@ -388,6 +397,20 @@
     return (Date.now() - oldTime) < 86400000;
   }
 
+  // --- Popup Modal ---
+  function showPopup(msgHtml) {
+    const popup = document.getElementById("popupModal");
+    document.getElementById("popupMsg").innerHTML = msgHtml;
+    popup.style.display = "flex";
+  }
+  function hidePopup() {
+    document.getElementById("popupModal").style.display = "none";
+  }
+  document.getElementById("popupCloseBtn").onclick = hidePopup;
+  document.getElementById("popupModal").onclick = function(e) {
+    if (e.target === this) hidePopup();
+  };
+
   function addToQueue(name, note) {
     if (!queueOpen) {
       queueMessage.textContent = "ขณะนี้ยังไม่เปิดให้จองคิว";
@@ -397,13 +420,35 @@
     const nameLower = name.trim().toLowerCase();
     const existed = queueHistoryLast24h.find(q => q.name.trim().toLowerCase() === nameLower);
     if (existed) {
-      queueMessage.textContent = "ชื่อนี้จองคิวไปแล้วใน 24 ชั่วโมงที่ผ่านมา";
+      const msLeft = existed.time + 86400000 - Date.now();
+      if (msLeft > 0) {
+        const h = Math.floor(msLeft / 3600000);
+        const m = Math.floor((msLeft % 3600000) / 60000);
+        const s = Math.floor((msLeft % 60000) / 1000);
+        showPopup(
+          `<div style="font-size:1.2em; color:#ff4b4b; margin-bottom:1em;">ชื่อนี้จองคิวไปแล้วใน 24 ชั่วโมงที่ผ่านมา</div>
+           <div>ต้องรออีก <span style="color:#fff;font-weight:700;">${h} ชั่วโมง ${m} นาที ${s} วินาที</span> ถึงจะจองซ้ำได้</div>`
+        );
+      } else {
+        queueMessage.textContent = "ชื่อนี้จองคิวไปแล้วใน 24 ชั่วโมงที่ผ่านมา";
+      }
       return;
     }
     // เช็คในคิวปัจจุบันซ้ำ (กันกรณีข้อมูลใน cache ยังไม่อัปเดต)
     const found = allQueue.find(q => q.name.trim().toLowerCase() === nameLower);
     if (found && isWithinOneDay(found.time)) {
-      queueMessage.textContent = "ชื่อนี้จองคิวไปแล้วใน 24 ชั่วโมงที่ผ่านมา";
+      const msLeft = found.time + 86400000 - Date.now();
+      if (msLeft > 0) {
+        const h = Math.floor(msLeft / 3600000);
+        const m = Math.floor((msLeft % 3600000) / 60000);
+        const s = Math.floor((msLeft % 60000) / 1000);
+        showPopup(
+          `<div style="font-size:1.2em; color:#ff4b4b; margin-bottom:1em;">ชื่อนี้จองคิวไปแล้วใน 24 ชั่วโมงที่ผ่านมา</div>
+           <div>ต้องรออีก <span style="color:#fff;font-weight:700;">${h} ชั่วโมง ${m} นาที ${s} วินาที</span> ถึงจะจองซ้ำได้</div>`
+        );
+      } else {
+        queueMessage.textContent = "ชื่อนี้จองคิวไปแล้วใน 24 ชั่วโมงที่ผ่านมา";
+      }
       return;
     }
     // บันทึกทั้ง queue และ queue_history
