@@ -997,18 +997,20 @@
     db.ref('shop').on('value', snap => {
       const arr = [];
       snap.forEach(child => arr.push({ key: child.key, ...child.val() }));
-      shopProducts = arr; // <--- FIX: assign array, not single product
+      shopProducts = arr;
       renderShopGrid();
     });
   }
   loadShopProducts();
 
+  // --- FIX: Render all products, not just one ---
   function renderShopGrid() {
     shopGrid.innerHTML = "";
     if (!shopProducts.length) {
       shopGrid.innerHTML = `<div style="color:#d1a3a3;font-style:italic;">- ไม่มีสินค้าในร้าน -</div>`;
       return;
     }
+    // Clear shopGrid before appending
     shopProducts.forEach(prod => {
       const card = document.createElement("div");
       card.className = "shop-card";
@@ -1028,7 +1030,7 @@
       }
       shopGrid.appendChild(card);
     });
-    // Add event listeners for edit/delete
+    // Add event listeners for edit/delete to all buttons
     if (isAdmin || checkAdminRemembered()) {
       shopGrid.querySelectorAll('.shop-edit-btn').forEach(btn => {
         btn.onclick = function() {
