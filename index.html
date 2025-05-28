@@ -370,13 +370,33 @@
     updateQueueTabScreen();
   });
 
+  // Helper: block same name within 1 day
+  function isWithinOneDay(oldTime) {
+    return (Date.now() - oldTime) < 86400000;
+  }
+  function getLeftTimeStr(oldTime) {
+    const msLeft = 86400000 - (Date.now() - oldTime);
+    if (msLeft <= 0) return "0 วินาที";
+    const h = Math.floor(msLeft / 3600000);
+    const m = Math.floor((msLeft % 3600000) / 60000);
+    const s = Math.floor((msLeft % 60000) / 1000);
+    let txt = "";
+    if (h > 0) txt += h + " ชั่วโมง ";
+    if (m > 0) txt += m + " นาที ";
+    txt += s + " วินาที";
+    return txt.trim();
+  }
+
   function addToQueue(name, note) {
     if (!queueOpen) {
       queueMessage.textContent = "ขณะนี้ยังไม่เปิดให้จองคิว";
       return;
     }
-    if (allQueue.some(q => q.name.toLowerCase() === name.toLowerCase())) {
-      queueMessage.textContent = "ชื่อนี้อยู่ในคิวแล้ว";
+    // เช็คว่ามีชื่อเดียวกันใน queue ที่ไม่เกิน 1 วัน
+    const found = allQueue.find(q => q.name.toLowerCase() === name.toLowerCase());
+    if (found && isWithinOneDay(found.time)) {
+      const left = getLeftTimeStr(found.time);
+      queueMessage.textContent = `ชื่อนี้จองคิวไปแล้วใน 24 ชั่วโมงที่ผ่านมา\nเหลือเวลาอีก ${left} ถึงจะลงชื่อซ้ำได้`;
       return;
     }
     const ref = db.ref('queue').push();
@@ -649,7 +669,7 @@
       if (target === "queue") updateQueueTabScreen();
       if (target === "leaderboard") renderLeaderboardTable();
       if (target === "admin") {
-        if(isAdmin || checkAdminRemembered()) showAdminPanel(); else showAdminLogin();
+        if (isAdmin || checkAdminRemembered()) showAdminPanel(); else showAdminLogin();
       }
     });
   });
