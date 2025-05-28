@@ -77,138 +77,10 @@
     .admin-toggle-queue { margin: 1em auto 0.5em auto; color: #ffb3b3; font-weight: bold; font-size: 1.1em; text-align: center; display: flex; align-items: center; gap: 0.5em; justify-content: center;}
     .admin-toggle-queue input[type="checkbox"] { transform: scale(1.3); accent-color: #ff4b4b; margin-right: 0.5em;}
     .queue-closed-message { color: #ff4b4b; font-weight: 700; text-align: center; margin-bottom: 2em; font-size: 1.2em; background: #220000cc; border-radius: 15px; padding: 1.2em 0.6em; box-shadow: 0 0 12px #ff4b4baa; display: none;}
-    /* SHOP styles */
-    .shop-content { display: none; color: #ffc9c9; }
-    .shop-content.active { display: block; }
-    .shop-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 2.2rem 1.6rem;
-      justify-content: center;
-      margin-bottom: 2.5em;
-    }
-    .shop-card {
-      background: linear-gradient(140deg, #2b0000 85%, #ff4b4b22 100%);
-      border-radius: 20px;
-      box-shadow: 0 0 15px #ff4b4b44, 0 0 0 #000;
-      color: #ffc9c9;
-      padding: 1.4rem 1.1rem 1rem 1.1rem;
-      width: 220px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      position: relative;
-      transition: box-shadow 0.2s;
-    }
-    .shop-card:hover {
-      box-shadow: 0 0 32px #ff4b4baa;
-    }
-    .shop-img {
-      width: 110px;
-      height: 110px;
-      object-fit: contain;
-      background: #220000cc;
-      border-radius: 14px;
-      margin-bottom: 1.1em;
-      box-shadow: 0 0 8px #ff4b4b33;
-      border: 2px solid #ff4b4b44;
-    }
-    .shop-title {
-      font-weight: 700;
-      color: #ff4b4b;
-      font-size: 1.2em;
-      margin-bottom: 0.5em;
-      text-align: center;
-      text-shadow: 0 0 8px #ff4b4bcc;
-    }
-    .shop-price {
-      font-size: 1.08em;
-      font-weight: 600;
-      color: #ffb3b3;
-      margin-bottom: 0.6em;
-    }
-    .shop-stock {
-      color: #ffc9c9;
-      font-size: 1em;
-      margin-bottom: 0.7em;
-    }
-    .shop-admin-actions {
-      display: flex;
-      gap: 0.6em;
-      margin-top: 0.7em;
-    }
-    .shop-admin-actions button {
-      background: #ff4b4b;
-      color: #fff;
-      border: none;
-      border-radius: 18px;
-      padding: 5px 13px;
-      font-size: 0.97em;
-      cursor: pointer;
-      transition: background 0.15s;
-    }
-    .shop-admin-actions button:hover {
-      background: #ff9999;
-      color: #111;
-    }
-    .shop-add-form {
-      background: #2b000088;
-      padding: 1.4rem 2rem 1.3rem 2rem;
-      border-radius: 20px;
-      box-shadow: 0 0 12px #ff4b4b33;
-      margin: 0 auto 2em auto;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 1em;
-      max-width: 400px;
-    }
-    .shop-add-form input[type="text"], 
-    .shop-add-form input[type="number"] {
-      width: 100%;
-      padding: 9px 16px;
-      font-size: 1.08em;
-      border: 2px solid #ff4b4b;
-      border-radius: 30px;
-      background: transparent;
-      color: #eee;
-      outline: none;
-      transition: all 0.3s ease;
-      margin-bottom: 0.3rem;
-      text-align: center;
-      user-select: text;
-    }
-    .shop-add-form input[type="file"] {
-      background: #220000cc;
-      color: #ffc9c9;
-      border-radius: 18px;
-      margin-bottom: 0.4rem;
-      font-size: 1em;
-    }
-    .shop-add-form button {
-      background: #ff4b4b;
-      color: #fff;
-      font-weight: 700;
-      padding: 10px 30px;
-      border: none;
-      border-radius: 30px;
-      font-size: 1.03em;
-      box-shadow: 0 0 7px #ff4b4baa;
-      cursor: pointer;
-      transition: 0.18s;
-      margin-top: 0.7em;
-    }
-    .shop-add-form button:hover {
-      background: #ff9999;
-      color: #111;
-    }
-    .shop-form-label {
-      align-self: flex-start;
-      font-weight: 600;
-      color: #ffb3b3;
-      font-size: 1.02em;
-      margin: 0.2em 0 0.1em 0.2em;
-    }
+    /* Shop system */
+    .shop-items-grid { display: flex; flex-wrap: wrap; gap: 2em; justify-content: center; }
+    .shop-card { background: #2b0000bb; border-radius: 16px; padding: 1.5em 1em; min-width: 210px; box-shadow: 0 0 18px #ff4b4b22; display: flex; flex-direction: column; align-items: center; gap: 1em; position: relative;}
+    .shop-card img { width: 90px; height: 90px; object-fit: contain; border-radius: 11px; box-shadow: 0 0 8px #ff4b4baa;}
     @keyframes fadeIn { from { opacity: 0; transform: scale(.98);} to   { opacity: 1; transform: scale(1);}}
     /* Popup styles */
     .popup-overlay {
@@ -268,14 +140,12 @@
       .scrollable-table-wrapper, .scrollable-queue-wrapper { max-height: 200px; }
       .admin-panel .players-list { max-height: 160px; }
       .popup-box { padding: 1.2rem 0.7rem 1.1rem 0.7rem; font-size: 1em;}
-      .shop-grid { gap: 1.4rem 0.7rem; }
-      .shop-card { width: 98vw; padding: 1.1rem 0.3rem 0.7rem 0.3rem;}
-      .shop-add-form { padding: 0.8rem 0.3rem 1rem 0.3rem; }
+      .shop-card { min-width: 120px; padding: 1em 0.4em; }
+      .shop-card img { width: 60px; height: 60px; }
     }
   </style>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
 </head>
 <body>
   <div class="background-effect" id="backgroundEffect"></div>
@@ -332,21 +202,9 @@
           <button class="leave-btn" id="leaveQueueBtn">ออกจากคิว</button>
         </div>
       </div>
-      <div id="shop" class="shop-content content">
-        <h1>ร้านค้า</h1>
-        <div id="shopAdminAddFormWrapper" style="display:none;">
-          <form class="shop-add-form" id="shopAddForm" autocomplete="off" enctype="multipart/form-data">
-            <div class="shop-form-label">เพิ่มหรือแก้ไขสินค้า</div>
-            <input type="file" id="shopImgInput" accept="image/*" />
-            <input type="text" id="shopTitleInput" maxlength="40" placeholder="ชื่อสินค้า" required />
-            <input type="number" id="shopPriceInput" min="0" placeholder="ราคา" required />
-            <input type="number" id="shopStockInput" min="0" placeholder="จำนวนในคลัง" required />
-            <input type="hidden" id="shopEditKeyInput" value="" />
-            <button type="submit" id="shopAddBtn">บันทึกสินค้า</button>
-            <div id="shopFormMsg" style="color:#ffb3b3;min-height:1em;"></div>
-          </form>
-        </div>
-        <div class="shop-grid" id="shopGrid"></div>
+      <div id="shop" class="content">
+        <h1>Shop</h1>
+        <div class="shop-list" id="shopList" style="margin-bottom:2em;"></div>
       </div>
       <div id="contact" class="content">
         <h1>PK4</h1>
@@ -390,6 +248,7 @@
               </div>
             </div>
           </div>
+          <!-- Shop admin panel will be injected here -->
           <button id="adminLogoutBtn" type="button">ออกจากระบบ</button>
         </div>
       </div>
@@ -409,8 +268,6 @@
   };
   firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
-  let storage = null;
-  try { storage = firebase.storage(); } catch(e) {}
 
   // --- Open/Close Queue Toggle ---
   let queueOpen = true;
@@ -497,9 +354,7 @@
   }
   window.addEventListener("DOMContentLoaded", function(){
     dropSnails(3000, 150);
-    if (checkAdminRemembered()) {
-      showAdminPanel();
-    }
+    if (checkAdminRemembered()) showAdminPanelPatched();
   });
 
   function makeCopyableNames(container) {
@@ -952,198 +807,152 @@
       };
     });
   }
-  function showAdminPanel() {
-    isAdmin = true;
-    adminLoginForm.style.display = "none";
-    adminPanel.style.display = "flex";
-    renderAdminPlayersList();
-    renderAdminQueueList(allQueue);
-    updateShopAdminFormState();
-    settingsRef.once('value').then(snap=>{
-      toggleQueueOpen.checked = snap.exists() ? !!snap.val() : true;
-      toggleQueueStatus.textContent = toggleQueueOpen.checked ? "(เปิดให้จองคิว)" : "(ปิดการจองคิว)";
-      toggleQueueStatus.style.color = toggleQueueOpen.checked ? "#47ff4b" : "#ff4b4b";
+
+  // --- SHOP ---
+  // HTML/CSS for Shop display
+  const shopListDiv = document.getElementById("shopList");
+  // Listen to shop data in realtime
+  let shopItems = [];
+  const shopRef = db.ref('shop');
+  shopRef.on('value', snap => {
+    const arr = [];
+    snap.forEach(child => {
+      arr.push({ key: child.key, ...child.val() });
     });
-  }
-  function showAdminLogin() {
-    isAdmin = false;
-    adminLoginForm.style.display = "flex";
-    adminPanel.style.display = "none";
-    updateShopAdminFormState();
-    adminLoginForm.reset();
-    adminLoginMsg.textContent = "";
-  }
-  adminLoginForm.addEventListener("submit", function(e){
-    e.preventDefault();
-    const pass = document.getElementById("adminPass").value;
-    if(pass === ADMIN_PASSWORD){
-      rememberAdminLogin();
-      showAdminPanel();
-    }else{
-      adminLoginMsg.textContent = "รหัสผิด";
-      adminLoginMsg.style.color = "#ff4b4b";
-    }
-  });
-  adminLogoutBtn.addEventListener("click", function(){
-    forgetAdminLogin();
-    showAdminLogin();
+    shopItems = arr;
+    renderShopList();
+    renderAdminShopList();
   });
 
-  // SHOP SYSTEM
-  let shopProducts = [];
-  const shopGrid = document.getElementById("shopGrid");
-  const shopTab = document.querySelector('.tab[data-tab="shop"]');
-  const shopContent = document.getElementById("shop");
-  const shopAdminAddFormWrapper = document.getElementById("shopAdminAddFormWrapper");
-  const shopAddForm = document.getElementById("shopAddForm");
-  const shopImgInput = document.getElementById("shopImgInput");
-  const shopTitleInput = document.getElementById("shopTitleInput");
-  const shopPriceInput = document.getElementById("shopPriceInput");
-  const shopStockInput = document.getElementById("shopStockInput");
-  const shopEditKeyInput = document.getElementById("shopEditKeyInput");
-  const shopFormMsg = document.getElementById("shopFormMsg");
-
-  function loadShopProducts() {
-    db.ref('shop').on('value', snap => {
-      const arr = [];
-      snap.forEach(child => arr.push({ key: child.key, ...child.val() }));
-      shopProducts = arr;
-      renderShopGrid();
-    });
-  }
-  loadShopProducts();
-
-  function renderShopGrid() {
-    shopGrid.innerHTML = "";
-    if (!shopProducts.length) {
-      shopGrid.innerHTML = `<div style="color:#d1a3a3;font-style:italic;">- ไม่มีสินค้าในร้าน -</div>`;
+  function renderShopList() {
+    if (!shopListDiv) return;
+    if (!shopItems.length) {
+      shopListDiv.innerHTML = "<div style='color:#d1a3a3;text-align:center;'>ไม่มีสินค้าในร้านขณะนี้</div>";
       return;
     }
-    shopProducts.forEach(prod => {
-      const card = document.createElement("div");
-      card.className = "shop-card";
-      card.innerHTML = `
-        <img class="shop-img" src="${prod.imgUrl ? prod.imgUrl : 'https://cdn-icons-png.flaticon.com/512/1170/1170678.png'}" alt="shop-img" />
-        <div class="shop-title">${prod.title}</div>
-        <div class="shop-price">ราคา: <span style="color:#47ff4b">${prod.price}</span></div>
-        <div class="shop-stock">ของที่มี: <span style="color:#ffb3b3">${prod.stock}</span></div>
+    let html = `<div class="shop-items-grid">`;
+    shopItems.forEach(item => {
+      html += `
+        <div class="shop-card">
+          <img src="${item.img || 'https://cdn-icons-png.flaticon.com/512/711/711769.png'}" alt="${item.name}">
+          <div style="font-size:1.2em;font-weight:bold;color:#ffb3b3;">${item.name || "-"}</div>
+          <div style="font-size:1.1em;color:#ffc9c9;"><span style="color:#ff4b4b;font-weight:bold;">${item.price || 0}</span> 💎</div>
+          <div style="font-size:1em;color:#ffb3b3;">จำนวนคงเหลือ: <b>${item.stock || 0}</b></div>
+        </div>
       `;
-      if (isAdmin || checkAdminRemembered()) {
-        card.innerHTML += `
-          <div class="shop-admin-actions">
-            <button data-key="${prod.key}" class="shop-edit-btn">แก้ไข</button>
-            <button data-key="${prod.key}" class="shop-delete-btn">ลบ</button>
-          </div>
-        `;
-      }
-      shopGrid.appendChild(card);
     });
-    // Add event listeners for edit/delete
-    if (isAdmin || checkAdminRemembered()) {
-      shopGrid.querySelectorAll('.shop-edit-btn').forEach(btn => {
-        btn.onclick = function() {
-          const key = btn.getAttribute('data-key');
-          const prod = shopProducts.find(p=>p.key===key);
-          if (!prod) return;
-          shopEditKeyInput.value = prod.key;
-          shopTitleInput.value = prod.title;
-          shopPriceInput.value = prod.price;
-          shopStockInput.value = prod.stock;
-          shopFormMsg.textContent = "แก้ไขสินค้า: "+prod.title;
-          shopAdminAddFormWrapper.scrollIntoView({behavior:"smooth"});
-        }
-      });
-      shopGrid.querySelectorAll('.shop-delete-btn').forEach(btn => {
-        btn.onclick = function() {
-          const key = btn.getAttribute('data-key');
-          const prod = shopProducts.find(p=>p.key===key);
-          if (!prod) return;
-          showPopupConfirm({
-            title: "ยืนยันการลบสินค้า",
-            message: `ลบ <strong>${prod.title}</strong> ออกจากร้าน?`,
-            confirmText: "ลบ",
-            cancelText: "ยกเลิก",
-            onConfirm: function() {
-              db.ref('shop/'+key).remove();
-              shopFormMsg.textContent = "";
-            }
-          });
-        }
+    html += "</div>";
+    shopListDiv.innerHTML = html;
+  }
+
+  // --- ADMIN: SHOP CONTROL ---
+  // Add admin shop section under adminPanel (insert dynamically)
+  let adminShopPanel = null;
+  function addAdminShopPanel() {
+    if (!adminPanel || adminPanel.querySelector('.admin-shop-panel')) return;
+    adminShopPanel = document.createElement('div');
+    adminShopPanel.className = 'admin-shop-panel';
+    adminShopPanel.style.margin = '2em 0';
+    adminShopPanel.innerHTML = `
+      <label style="font-size:1.15em;">จัดการสินค้า Shop</label>
+      <form id="addShopItemForm" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1em;">
+        <input type="text" id="addShopImg" placeholder="ลิ้งค์รูป" style="width:130px;" maxlength="256" required />
+        <input type="text" id="addShopName" placeholder="ชื่อสินค้า" maxlength="32" required />
+        <input type="number" id="addShopPrice" placeholder="ราคา" style="width:70px;" min="0" required />
+        <input type="number" id="addShopStock" placeholder="จำนวน" style="width:70px;" min="0" required />
+        <button type="submit" style="margin:0;">เพิ่มสินค้า</button>
+      </form>
+      <div class="admin-shop-list" id="adminShopList"></div>
+    `;
+    // Insert above logout
+    adminPanel.insertBefore(adminShopPanel, adminLogoutBtn);
+    bindAdminShopEvents();
+  }
+
+  function bindAdminShopEvents() {
+    // Add shop item
+    const addShopItemForm = document.getElementById("addShopItemForm");
+    if (addShopItemForm) {
+      addShopItemForm.addEventListener("submit", function(e){
+        e.preventDefault();
+        const img = document.getElementById("addShopImg").value.trim();
+        const name = document.getElementById("addShopName").value.trim();
+        const price = parseInt(document.getElementById("addShopPrice").value) || 0;
+        const stock = parseInt(document.getElementById("addShopStock").value) || 0;
+        if (!name || !img) return;
+        db.ref('shop').push({ img, name, price, stock });
+        addShopItemForm.reset();
+        adminMsg("เพิ่มสินค้าใหม่สำเร็จ!","ok");
       });
     }
   }
 
-  function resetShopForm() {
-    shopImgInput.value = "";
-    shopTitleInput.value = "";
-    shopPriceInput.value = "";
-    shopStockInput.value = "";
-    shopEditKeyInput.value = "";
-    shopFormMsg.textContent = "";
+  function renderAdminShopList() {
+    const adminShopList = document.getElementById("adminShopList");
+    if (!adminShopList) return;
+    if (!shopItems.length) {
+      adminShopList.innerHTML = "<div style='color:#d1a3a3;text-align:center;'>ไม่มีสินค้าในร้านขณะนี้</div>";
+      return;
+    }
+    let html = `<table style="width:100%;background:#4f0000;border-radius:12px;overflow:hidden;margin-bottom:1em;box-shadow:0 0 10px #ff4b4b44;"><thead>
+      <tr><th>รูป</th><th>ชื่อ</th><th>ราคา</th><th>จำนวน</th><th>บันทึก</th><th>ลบ</th></tr>
+      </thead><tbody>`;
+    shopItems.forEach((item, idx) => {
+      html += `<tr>
+        <td><img src="${item.img}" style="width:45px;height:45px;object-fit:contain;border-radius:7px;background:#330000;"></td>
+        <td><input data-index="${idx}" data-field="name" value="${item.name}" maxlength="32" style="width:80px;background:#550000;color:#ffc9c9;text-align:center;border-radius:9px;border:1px solid #772222;" /></td>
+        <td><input data-index="${idx}" data-field="price" type="number" value="${item.price}" min="0" style="width:48px;background:#550000;color:#ffc9c9;text-align:center;border-radius:9px;border:1px solid #772222;" /></td>
+        <td><input data-index="${idx}" data-field="stock" type="number" value="${item.stock}" min="0" style="width:44px;background:#550000;color:#ffc9c9;text-align:center;border-radius:9px;border:1px solid #772222;" /></td>
+        <td><button data-index="${idx}" class="admin-save-shopitem">บันทึก</button></td>
+        <td><button data-index="${idx}" class="admin-remove-shopitem">ลบ</button></td>
+      </tr>
+      <tr>
+        <td colspan="6" style="background:#330000;padding:5px 10px 5px 20px;">
+          <input data-index="${idx}" data-field="img" value="${item.img||''}" maxlength="256" style="width:97%;background:#220000;color:#ffc9c9;text-align:left;border-radius:9px;border:1px solid #772222;font-size:0.95em;" />
+          <span style="font-size:0.9em;color:#d1a3a3;">&lt;-- ลิ้งค์รูป</span>
+        </td>
+      </tr>`;
+    });
+    html += "</tbody></table>";
+    adminShopList.innerHTML = html;
+
+    // Bind save buttons
+    adminShopList.querySelectorAll(".admin-save-shopitem").forEach(btn => {
+      btn.onclick = function(){
+        const idx = parseInt(btn.getAttribute("data-index"));
+        const nameInput = adminShopList.querySelector(`input[data-index="${idx}"][data-field="name"]`);
+        const priceInput = adminShopList.querySelector(`input[data-index="${idx}"][data-field="price"]`);
+        const stockInput = adminShopList.querySelector(`input[data-index="${idx}"][data-field="stock"]`);
+        const imgInput = adminShopList.querySelector(`input[data-index="${idx}"][data-field="img"]`);
+        const item = shopItems[idx];
+        db.ref('shop/' + item.key).update({
+          name: nameInput.value.trim().substring(0,32),
+          price: parseInt(priceInput.value)||0,
+          stock: parseInt(stockInput.value)||0,
+          img: imgInput.value.trim()
+        });
+        adminMsg("อัปเดตสินค้าสำเร็จ!","ok");
+      };
+    });
+    // Bind remove buttons
+    adminShopList.querySelectorAll(".admin-remove-shopitem").forEach(btn => {
+      btn.onclick = function(){
+        if (!confirm("ลบสินค้านี้ใช่หรือไม่?")) return;
+        const idx = parseInt(btn.getAttribute("data-index"));
+        const item = shopItems[idx];
+        db.ref('shop/' + item.key).remove();
+        adminMsg("ลบสินค้าสำเร็จ!","ok");
+      };
+    });
   }
 
-  // Add/Edit product
-  shopAddForm.addEventListener("submit", function(e) {
-    e.preventDefault();
-    shopFormMsg.textContent = "กำลังบันทึก...";
-    const title = shopTitleInput.value.trim();
-    const price = parseInt(shopPriceInput.value);
-    const stock = parseInt(shopStockInput.value);
-    const editKey = shopEditKeyInput.value;
-    let imgFile = shopImgInput.files[0];
-
-    function saveProduct(imgUrl) {
-      const prodData = { title, price, stock, imgUrl: imgUrl || undefined };
-      if (editKey) {
-        // Update
-        db.ref('shop/'+editKey).update(prodData).then(()=>{
-          shopFormMsg.textContent = "บันทึกสำเร็จ!";
-          resetShopForm();
-        });
-      } else {
-        // Add new
-        db.ref('shop').push(prodData).then(()=>{
-          shopFormMsg.textContent = "เพิ่มสินค้าเรียบร้อย!";
-          resetShopForm();
-        });
-      }
-    }
-
-    if (imgFile && storage) {
-      // Upload image
-      const filename = "shop_"+Date.now()+"_"+imgFile.name.replace(/[^\w.]/g, "");
-      const storageRef = storage.ref('shop_images/'+filename);
-      storageRef.put(imgFile).then(snapshot=>{
-        return snapshot.ref.getDownloadURL();
-      }).then(url=>{
-        saveProduct(url);
-      }).catch(()=>{
-        shopFormMsg.textContent = "อัปโหลดรูปภาพผิดพลาด";
-      });
-    } else {
-      // No image update
-      if (editKey) {
-        if (imgFile) shopFormMsg.textContent = "ระบบไม่รองรับการอัปโหลดรูปขณะนี้";
-        db.ref('shop/'+editKey).once('value').then(snap=>{
-          saveProduct(snap.val().imgUrl || "");
-        });
-      } else {
-        saveProduct("");
-      }
-    }
-  });
-
-  // Show/Hide admin product form
-  function updateShopAdminFormState() {
-    if (isAdmin || checkAdminRemembered()) {
-      shopAdminAddFormWrapper.style.display = "block";
-    } else {
-      shopAdminAddFormWrapper.style.display = "none";
-    }
-    resetShopForm();
+  // --- Patch adminPanel to add shop panel after login ---
+  function showAdminPanelPatched() {
+    showAdminPanel(); // original function
+    addAdminShopPanel();
+    renderAdminShopList();
   }
-
-  // Tab logic (add shop tab)
+  // Patch the tab click for admin as in your code
   const tabs = document.querySelectorAll(".tab");
   const contents = document.querySelectorAll(".content");
   const clickSound = new Audio("https://freesound.org/data/previews/256/256113_3263906-lq.mp3");
@@ -1162,21 +971,11 @@
       if (target === "queue") updateQueueTabScreen();
       if (target === "leaderboard") renderLeaderboardTable();
       if (target === "admin") {
-        if(isAdmin || checkAdminRemembered()) showAdminPanel(); else showAdminLogin();
+        if(isAdmin || checkAdminRemembered()) showAdminPanelPatched(); else showAdminLogin();
       }
-      if (target === "shop") {
-        updateShopAdminFormState();
-        renderShopGrid();
-      }
+      if (target === "shop") renderShopList();
     });
   });
-
-  // Ensure admin panel triggers shop form on login/logout (already handled above)
-
-  // Shop: If entering via URL hash or default, show correct tab
-  if (location.hash === "#shop") {
-    shopTab.click();
-  }
 
   document.getElementById("searchInput").addEventListener("keydown", () => {
     if (typingSound.paused) {
@@ -1241,6 +1040,43 @@
   }
   makeCopyableNames(document.getElementById('contactList'));
   renderLeaderboardTable();
+
+  // Admin login logic patch
+  function showAdminPanel() {
+    isAdmin = true;
+    adminLoginForm.style.display = "none";
+    adminPanel.style.display = "flex";
+    renderAdminPlayersList();
+    renderAdminQueueList(allQueue);
+    settingsRef.once('value').then(snap=>{
+      toggleQueueOpen.checked = snap.exists() ? !!snap.val() : true;
+      toggleQueueStatus.textContent = toggleQueueOpen.checked ? "(เปิดให้จองคิว)" : "(ปิดการจองคิว)";
+      toggleQueueStatus.style.color = toggleQueueOpen.checked ? "#47ff4b" : "#ff4b4b";
+    });
+  }
+  function showAdminLogin() {
+    isAdmin = false;
+    adminLoginForm.style.display = "flex";
+    adminPanel.style.display = "none";
+    adminLoginForm.reset();
+    adminLoginMsg.textContent = "";
+  }
+  adminLoginForm.addEventListener("submit", function(e){
+    e.preventDefault();
+    const pass = document.getElementById("adminPass").value;
+    if(pass === ADMIN_PASSWORD){
+      rememberAdminLogin();
+      showAdminPanelPatched();
+    }else{
+      adminLoginMsg.textContent = "รหัสผิด";
+      adminLoginMsg.style.color = "#ff4b4b";
+    }
+  });
+  adminLogoutBtn.addEventListener("click", function(){
+    forgetAdminLogin();
+    showAdminLogin();
+  });
+
 </script>
 </body>
 </html>
