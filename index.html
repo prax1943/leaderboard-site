@@ -12,7 +12,7 @@
     .menu { display: flex; justify-content: center; margin-bottom: 2rem; gap: 2rem; user-select: none;}
     .tab { padding: 12px 30px; border-radius: 30px; cursor: pointer; font-weight: 700; font-size: 1.1rem; color: #ff4b4b; background: #220000; box-shadow: 0 0 8px #ff4b4b88; transition: all 0.3s ease; border: 2px solid transparent; user-select: none; user-drag: none;}
     .tab:hover, .tab.active { background: #ff4b4b; color: #111; box-shadow: 0 0 20px #ff4b4bcc; border-color: #ff4b4b;}
-    .container { background: linear-gradient(145deg, #2b0000, #480000); padding: 2rem 3rem; border-radius: 20px; box-shadow: 0 0 20px #ff1e1e88, inset 0 0 40px #ff4b4baa; transform-style: preserve-3d; transition: box-shadow 0.3s ease; user-select: none; transform: rotateX(0deg) rotateY(0deg);}
+    .container { background: linear-gradient(145deg, #2b0000, #480000); padding: 2rem 3rem; border-radius: 20px; box-shadow: 0 0 20px #ff1e1e88, inset 0 0 40px #ff4b4baa; transform-style: preserve-3d; transition: box-shadow 0.3s ease; user-select: none;}
     .content { display: none; color: #ffc9c9;}
     .content.active { display: block;}
     h1 { font-weight: 700; font-size: 3rem; letter-spacing: 3px; color: #ff4b4b; margin-bottom: 2rem; text-shadow: 0 0 12px #ff4b4bcc; user-select: none; text-align: center;}
@@ -1182,21 +1182,21 @@
     }
   });
 
-  // Tilt effect
-  const container = document.getElementById("tiltContainer");
-  let mouseX = 0, mouseY = 0, rotateX = 0, rotateY = 0;
-  window.addEventListener("mousemove", e => {
-    const rect = container.getBoundingClientRect();
-    mouseX = e.clientX - (rect.left + rect.width / 2);
-    mouseY = e.clientY - (rect.top + rect.height / 2);
-  });
-  function animate() {
-    rotateX += (mouseY / 25 - rotateX) * 0.1;
-    rotateY += (mouseX / 25 - rotateY) * 0.1;
-    container.style.transform = `rotateX(${-rotateX}deg) rotateY(${rotateY}deg)`;
-    requestAnimationFrame(animate);
-  }
-  animate();
+  // Tilt effect (Disabled, just keep UI static so buttons match mouse)
+  // const container = document.getElementById("tiltContainer");
+  // let mouseX = 0, mouseY = 0, rotateX = 0, rotateY = 0;
+  // window.addEventListener("mousemove", e => {
+  //   const rect = container.getBoundingClientRect();
+  //   mouseX = e.clientX - (rect.left + rect.width / 2);
+  //   mouseY = e.clientY - (rect.top + rect.height / 2);
+  // });
+  // function animate() {
+  //   rotateX += (mouseY / 25 - rotateX) * 0.1;
+  //   rotateY += (mouseX / 25 - rotateY) * 0.1;
+  //   container.style.transform = `rotateX(${-rotateX}deg) rotateY(${rotateY}deg)`;
+  //   requestAnimationFrame(animate);
+  // }
+  // animate();
 
   // BG particles
   const bg = document.getElementById("backgroundEffect");
