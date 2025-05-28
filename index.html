@@ -997,7 +997,7 @@
     db.ref('shop').on('value', snap => {
       const arr = [];
       snap.forEach(child => arr.push({ key: child.key, ...child.val() }));
-      shopProducts = arr;
+      shopProducts = arr; // <--- FIX: assign array, not single product
       renderShopGrid();
     });
   }
