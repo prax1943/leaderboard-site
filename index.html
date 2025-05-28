@@ -78,6 +78,54 @@
     .admin-toggle-queue input[type="checkbox"] { transform: scale(1.3); accent-color: #ff4b4b; margin-right: 0.5em;}
     .queue-closed-message { color: #ff4b4b; font-weight: 700; text-align: center; margin-bottom: 2em; font-size: 1.2em; background: #220000cc; border-radius: 15px; padding: 1.2em 0.6em; box-shadow: 0 0 12px #ff4b4baa; display: none;}
     @keyframes fadeIn { from { opacity: 0; transform: scale(.98);} to   { opacity: 1; transform: scale(1);}}
+    /* Popup styles */
+    .popup-overlay {
+      position: fixed; left: 0; top: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(17,0,0,0.65);
+      display: flex; justify-content: center; align-items: center;
+      z-index: 20000;
+    }
+    .popup-box {
+      background: linear-gradient(140deg, #2b0000 80%, #ff4b4b22 100%);
+      border-radius: 22px;
+      box-shadow: 0 0 30px #ff4b4baa;
+      color: #ffc9c9;
+      padding: 2rem 2.5rem 1.6rem 2.5rem;
+      max-width: 380px; min-width: 200px;
+      font-size: 1.15em;
+      text-align: center;
+      animation: fadeIn 0.3s;
+    }
+    .popup-box h2 {
+      color: #ff4b4b;
+      margin-bottom: 1rem;
+      font-size: 1.45em;
+      letter-spacing: 1px;
+    }
+    .popup-box .popup-msg {
+      margin-bottom: 1.4em;
+      color: #ffc9c9;
+    }
+    .popup-box .popup-btns {
+      display: flex; justify-content: center; gap: 1.3em;
+    }
+    .popup-box button {
+      background: #ff4b4b;
+      color: #fff;
+      font-weight: 700;
+      padding: 10px 30px;
+      border: none;
+      border-radius: 25px;
+      font-size: 1.06em;
+      box-shadow: 0 0 7px #ff4b4baa;
+      cursor: pointer;
+      transition: 0.18s;
+    }
+    .popup-box button:hover {
+      background: #ff9999;
+      color: #111;
+    }
     @media (max-width: 600px) {
       h1 { font-size: 2.2rem; }
       th, td { font-size: 0.9rem; padding: 14px 16px; }
@@ -87,6 +135,7 @@
       .queue-form, .queue-list, .queue-waiting, .admin-panel, .admin-login-form { padding: 1rem; }
       .scrollable-table-wrapper, .scrollable-queue-wrapper { max-height: 200px; }
       .admin-panel .players-list { max-height: 160px; }
+      .popup-box { padding: 1.2rem 0.7rem 1.1rem 0.7rem; font-size: 1em;}
     }
   </style>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -95,6 +144,7 @@
 <body>
   <div class="background-effect" id="backgroundEffect"></div>
   <div class="snail-drop-container" id="snailDropContainer"></div>
+  <div id="popupContainer"></div>
   <div class="wrapper">
     <nav class="menu">
       <div class="tab" data-tab="leaderboard">Leaderboard</div>
@@ -517,11 +567,75 @@
     }
     addToQueue(name, note);
   });
+
+  // --- Popup Confirm Utility ---
+  function showPopupConfirm({title, message, confirmText, cancelText, onConfirm, onCancel}) {
+    // Remove any existing popup
+    let container = document.getElementById('popupContainer');
+    container.innerHTML = '';
+    // Create overlay
+    const overlay = document.createElement('div');
+    overlay.className = "popup-overlay";
+    overlay.tabIndex = -1;
+    // Create popup box
+    const box = document.createElement('div');
+    box.className = "popup-box";
+    if (title) {
+      const h2 = document.createElement('h2');
+      h2.textContent = title;
+      box.appendChild(h2);
+    }
+    const msgDiv = document.createElement('div');
+    msgDiv.className = "popup-msg";
+    msgDiv.innerHTML = message;
+    box.appendChild(msgDiv);
+    // Buttons
+    const btns = document.createElement('div');
+    btns.className = "popup-btns";
+    // ยืนยัน
+    const btnYes = document.createElement('button');
+    btnYes.textContent = confirmText || "ยืนยัน";
+    btnYes.onclick = () => {
+      overlay.remove();
+      if (onConfirm) onConfirm();
+    };
+    // ยกเลิก
+    const btnNo = document.createElement('button');
+    btnNo.textContent = cancelText || "ยกเลิก";
+    btnNo.onclick = () => {
+      overlay.remove();
+      if (onCancel) onCancel();
+    };
+    btns.appendChild(btnYes);
+    btns.appendChild(btnNo);
+    box.appendChild(btns);
+    overlay.appendChild(box);
+    container.appendChild(overlay);
+
+    // Escape key or click-outside cancels
+    overlay.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') { btnNo.click(); }
+    });
+    overlay.focus();
+    overlay.addEventListener('click', function(e){
+      if (e.target === overlay) btnNo.click();
+    });
+  }
+
   leaveQueueBtn.addEventListener("click", function() {
-    removeFromQueueByName(myName);
-    showFormScreen();
-    renderQueue(allQueue);
+    showPopupConfirm({
+      title: "ยืนยันการออกจากคิว",
+      message: `หากคุณออกจากคิว <span style="color:#ffb3b3;font-weight:bold;">จะไม่สามารถใช้ชื่อเดิมจองคิวใหม่ได้อีกเป็นเวลา 24 ชั่วโมง</span><br><br>คุณแน่ใจหรือไม่ว่าต้องการออกจากคิว?`,
+      confirmText: "ออกจากคิว",
+      cancelText: "ยกเลิก",
+      onConfirm: function() {
+        removeFromQueueByName(myName);
+        showFormScreen();
+        renderQueue(allQueue);
+      }
+    });
   });
+
   queueTab.addEventListener("click", updateQueueTabScreen);
 
   // Admin
