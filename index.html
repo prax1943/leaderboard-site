@@ -178,13 +178,6 @@
       text-align: center;
       user-select: text;
     }
-    .shop-add-form input[type="file"] {
-      background: #220000cc;
-      color: #ffc9c9;
-      border-radius: 18px;
-      margin-bottom: 0.4rem;
-      font-size: 1em;
-    }
     .shop-add-form button {
       background: #ff4b4b;
       color: #fff;
@@ -275,7 +268,6 @@
   </style>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
 </head>
 <body>
   <div class="background-effect" id="backgroundEffect"></div>
@@ -335,9 +327,9 @@
       <div id="shop" class="shop-content content">
         <h1>ร้านค้า</h1>
         <div id="shopAdminAddFormWrapper" style="display:none;">
-          <form class="shop-add-form" id="shopAddForm" autocomplete="off" enctype="multipart/form-data">
+          <form class="shop-add-form" id="shopAddForm" autocomplete="off">
             <div class="shop-form-label">เพิ่มหรือแก้ไขสินค้า</div>
-            <input type="file" id="shopImgInput" accept="image/*" />
+            <input type="text" id="shopImgUrlInput" placeholder="ลิงก์รูปภาพ (ใส่ https://...)" maxlength="400" />
             <input type="text" id="shopTitleInput" maxlength="40" placeholder="ชื่อสินค้า" required />
             <input type="number" id="shopPriceInput" min="0" placeholder="ราคา" required />
             <input type="number" id="shopStockInput" min="0" placeholder="จำนวนในคลัง" required />
@@ -409,8 +401,6 @@
   };
   firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
-  let storage = null;
-  try { storage = firebase.storage(); } catch(e) {}
 
   // --- Open/Close Queue Toggle ---
   let queueOpen = true;
@@ -989,14 +979,14 @@
     showAdminLogin();
   });
 
-  // SHOP SYSTEM
+  // SHOP SYSTEM (URL only, no Firebase Storage)
   let shopProducts = [];
   const shopGrid = document.getElementById("shopGrid");
   const shopTab = document.querySelector('.tab[data-tab="shop"]');
   const shopContent = document.getElementById("shop");
   const shopAdminAddFormWrapper = document.getElementById("shopAdminAddFormWrapper");
   const shopAddForm = document.getElementById("shopAddForm");
-  const shopImgInput = document.getElementById("shopImgInput");
+  const shopImgUrlInput = document.getElementById("shopImgUrlInput");
   const shopTitleInput = document.getElementById("shopTitleInput");
   const shopPriceInput = document.getElementById("shopPriceInput");
   const shopStockInput = document.getElementById("shopStockInput");
@@ -1046,6 +1036,7 @@
           const prod = shopProducts.find(p=>p.key===key);
           if (!prod) return;
           shopEditKeyInput.value = prod.key;
+          shopImgUrlInput.value = prod.imgUrl || "";
           shopTitleInput.value = prod.title;
           shopPriceInput.value = prod.price;
           shopStockInput.value = prod.stock;
@@ -1074,7 +1065,7 @@
   }
 
   function resetShopForm() {
-    shopImgInput.value = "";
+    shopImgUrlInput.value = "";
     shopTitleInput.value = "";
     shopPriceInput.value = "";
     shopStockInput.value = "";
@@ -1089,48 +1080,24 @@
     const title = shopTitleInput.value.trim();
     const price = parseInt(shopPriceInput.value);
     const stock = parseInt(shopStockInput.value);
+    const imgUrl = shopImgUrlInput.value.trim();
     const editKey = shopEditKeyInput.value;
-    let imgFile = shopImgInput.files[0];
 
-    function saveProduct(imgUrl) {
-      const prodData = { title, price, stock, imgUrl: imgUrl || undefined };
+    function saveProduct() {
+      const prodData = { title, price, stock, imgUrl: imgUrl || "" };
       if (editKey) {
-        // Update
         db.ref('shop/'+editKey).update(prodData).then(()=>{
           shopFormMsg.textContent = "บันทึกสำเร็จ!";
           resetShopForm();
         });
       } else {
-        // Add new
         db.ref('shop').push(prodData).then(()=>{
           shopFormMsg.textContent = "เพิ่มสินค้าเรียบร้อย!";
           resetShopForm();
         });
       }
     }
-
-    if (imgFile && storage) {
-      // Upload image
-      const filename = "shop_"+Date.now()+"_"+imgFile.name.replace(/[^\w.]/g, "");
-      const storageRef = storage.ref('shop_images/'+filename);
-      storageRef.put(imgFile).then(snapshot=>{
-        return snapshot.ref.getDownloadURL();
-      }).then(url=>{
-        saveProduct(url);
-      }).catch(()=>{
-        shopFormMsg.textContent = "อัปโหลดรูปภาพผิดพลาด";
-      });
-    } else {
-      // No image update
-      if (editKey) {
-        if (imgFile) shopFormMsg.textContent = "ระบบไม่รองรับการอัปโหลดรูปขณะนี้";
-        db.ref('shop/'+editKey).once('value').then(snap=>{
-          saveProduct(snap.val().imgUrl || "");
-        });
-      } else {
-        saveProduct("");
-      }
-    }
+    saveProduct();
   });
 
   // Show/Hide admin product form
