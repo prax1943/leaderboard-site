@@ -1004,9 +1004,9 @@
   loadShopProducts();
 
   function renderShopGrid() {
-    shopGrid.innerHTML = "";
+    shopGrid.appendChild(card); = "";
     if (!shopProducts.length) {
-      shopGrid.innerHTML = `<div style="color:#d1a3a3;font-style:italic;">- ไม่มีสินค้าในร้าน -</div>`;
+     shopGrid.appendChild(card); = `<div style="color:#d1a3a3;font-style:italic;">- ไม่มีสินค้าในร้าน -</div>`;
       return;
     }
     shopProducts.forEach(prod => {
